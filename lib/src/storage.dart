@@ -1,6 +1,3 @@
-import 'package:dost/dost.dart';
-import 'package:dost/src/repository_impl.dart';
-
 typedef EntityBuilder<T> = T Function(Map<String, dynamic>);
 
 abstract class Storage {
@@ -24,7 +21,7 @@ abstract class Storage {
       throw 'EntityBuilder must not be null';
     }
 
-    _repositories.putIfAbsent(repoName, () => RepositoryImpl<T>(builder));
+    _repositories.putIfAbsent(repoName, () => _Repository<T>(builder));
   }
 
   static Repository<T> getRepository<T extends Entity>(String name) {
@@ -47,4 +44,76 @@ abstract class Storage {
   }
 
   static void close() => _repositories = null;
+}
+
+abstract class Repository<T extends Entity> {
+  List<T> get entities;
+
+  void put(T entity);
+
+  void putAll(Iterable<T> entities);
+
+  void remove(T entity);
+
+  void removeAll(Iterable<T> entities);
+
+  void clear();
+}
+
+class _Repository<T extends Entity> extends Repository<T> {
+  final List<T> _entities;
+  final EntityBuilder<T> _builder;
+  int _nextId;
+
+  _Repository(this._builder) : _entities = [] {
+    _nextId = 0;
+  }
+
+  List<T> get entities {
+    var copies = [];
+    _entities.forEach((entity) {
+      var copy = _builder(entity.toMap());
+      copy._id = entity.id;
+      copies.add(copy);
+    });
+    return List.from(copies);
+  }
+
+  void put(T entity) {
+    var i = _entities.indexOf(entity);
+    if (i >= 0) {
+      _entities.replaceRange(i, i + 1, [entity]);
+    } else {
+      entity._id = _nextId++;
+      _entities.add(entity);
+    }
+  }
+
+  void putAll(Iterable<T> entities) {
+    entities.forEach(put);
+  }
+
+  void remove(T entity) {
+    var i = _entities.indexOf(entity);
+    if (i >= 0) _entities.removeAt(i);
+  }
+
+  void removeAll(Iterable<T> entities) {
+    entities.forEach(remove);
+  }
+
+  void clear() {
+    _entities.clear();
+  }
+}
+
+abstract class Entity {
+  int _id;
+
+  int get id => _id;
+
+  Map<String, Object> toMap();
+
+  @override
+  bool operator ==(other) => id == other.id;
 }

@@ -70,9 +70,6 @@ class User extends Entity {
   String userName;
 
   @override
-  void fromMap(Map<String, Object> map) {}
-
-  @override
   Map<String, Object> toMap() {
     return {};
   }
@@ -80,9 +77,6 @@ class User extends Entity {
 
 class Animal extends Entity {
   String animalName;
-
-  @override
-  void fromMap(Map<String, Object> map) {}
 
   @override
   Map<String, Object> toMap() {
