@@ -1,5 +1,5 @@
 library dost;
 
 export 'src/storage.dart';
-export 'src/collection.dart';
-export 'src/document.dart';
+export 'src/repository.dart';
+export 'src/entity.dart';
