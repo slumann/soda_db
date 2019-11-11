@@ -8,7 +8,7 @@ Created from templates made available by Stagehand under a BSD-style
 A simple usage example:
 
 ```dart
-import 'package:dost/dost.dart';
+import 'package:soda_db/soda_db.dart';
 
 main() {
   var awesome = new Awesome();

@@ -1,4 +1,4 @@
-import 'package:dost/dost.dart';
+import 'package:soda_db/soda_db.dart';
 import 'package:test/test.dart';
 
 void main() {
