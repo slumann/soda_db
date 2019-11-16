@@ -4,23 +4,27 @@ import 'package:soda_db/src/meta_data.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final jsonData = '{"dbVersion":1,"freePages":[512,1024],"dataPages":'
+  final jsonData =
+      '{"dbVersion":1,"nextId":2,"freePages":[512,1024],"dataPages":'
       '{"1":[1400,1800],"2":[2000],"3":[2400,2600],"4":[3000,3200]}}';
 
   test('Serialize meta', () {
     var meta = MetaData();
+    meta.nextId;
+    meta.nextId;
     meta.freePages.addAll([512, 1024]);
     meta.dataPages['1'] = [1400, 1800];
     meta.dataPages['2'] = [2000];
     meta.dataPages['3'] = [2400, 2600];
     meta.dataPages['4'] = [3000, 3200];
-    print(meta.toJson().toString());
+
     expect(json.encode(meta), jsonData);
   });
 
   test('Deserialize meta', () {
     var meta = MetaData.fromMap(json.decode(jsonData));
     expect(meta.dbVersion, 1);
+    expect(meta.nextId, 2);
     expect(meta.freePages.length, 2);
     expect(meta.freePages.contains(512), true);
     expect(meta.freePages.contains(1024), true);
@@ -43,5 +47,11 @@ void main() {
     expect(meta.dataPages['4'].length, 2);
     expect(meta.dataPages['4'].contains(3000), true);
     expect(meta.dataPages['4'].contains(3200), true);
+  });
+
+  test('Get next ID', () {
+    var meta = MetaData();
+    expect(meta.nextId, 0);
+    expect(meta.nextId, 1);
   });
 }
