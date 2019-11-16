@@ -70,7 +70,7 @@ class User extends Entity {
   String userName;
 
   @override
-  Map<String, Object> toMap() {
+  Map<String, Object> toJson() {
     return {};
   }
 }
@@ -79,7 +79,7 @@ class Animal extends Entity {
   String animalName;
 
   @override
-  Map<String, Object> toMap() {
+  Map<String, Object> toJson() {
     return {};
   }
 }

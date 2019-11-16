@@ -103,7 +103,7 @@ class User extends Entity {
 
   User(this.name);
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {'name': name};
   }
 

@@ -72,7 +72,7 @@ class _Repository<T extends Entity> extends Repository<T> {
   List<T> get entities {
     var copies = [];
     _entities.forEach((entity) {
-      var copy = _builder(entity.toMap());
+      var copy = _builder(entity.toJson());
       copy._id = entity.id;
       copies.add(copy);
     });
@@ -112,7 +112,7 @@ abstract class Entity {
 
   int get id => _id;
 
-  Map<String, Object> toMap();
+  Map<String, Object> toJson();
 
   @override
   bool operator ==(other) => id == other.id;
