@@ -2,11 +2,11 @@ class MetaData {
   int dbVersion = 1;
   int _nextId = 0;
   List<int> freePages;
-  Map<String, List<int>> dataPages;
+  Map<String, Map<String, List<int>>> repositories;
 
   MetaData()
       : freePages = [],
-        dataPages = {};
+        repositories = {};
 
   int get nextId => _nextId++;
 
@@ -14,12 +14,14 @@ class MetaData {
     dbVersion = map['dbVersion'];
     _nextId = map['nextId'];
     freePages = List<int>.from(map['freePages']) ?? [];
-    dataPages = {};
-    var entries = map['dataPages'] ?? {};
-    entries.forEach((key, value) {
-      dataPages.putIfAbsent(key, () => []);
-      var pages = List<int>.from(value) ?? [];
-      dataPages[key] = pages;
+    repositories = {};
+    var repos = map['repositories'] ?? {};
+    repos.forEach((repoName, entityMap) {
+      repositories.putIfAbsent(repoName, () => {});
+      repos[repoName].forEach((entityName, pageList) {
+        var pages = List<int>.from(pageList) ?? [];
+        repositories[repoName][entityName] = pages;
+      });
     });
   }
 
@@ -28,7 +30,7 @@ class MetaData {
       'dbVersion': dbVersion,
       'nextId': _nextId,
       'freePages': freePages,
-      'dataPages': dataPages,
+      'repositories': repositories,
     };
   }
 }

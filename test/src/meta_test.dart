@@ -5,18 +5,25 @@ import 'package:test/test.dart';
 
 void main() {
   final jsonData =
-      '{"dbVersion":1,"nextId":2,"freePages":[512,1024],"dataPages":'
-      '{"1":[1400,1800],"2":[2000],"3":[2400,2600],"4":[3000,3200]}}';
+      '{"dbVersion":1,"nextId":2,"freePages":[512,1024],"repositories":'
+      '{"users":{"0":[1400,1800],"1":[2000]},'
+      '"animals":{"0":[2000],"1":[2400,2600]}}}';
 
   test('Serialize meta', () {
     var meta = MetaData();
     meta.nextId;
     meta.nextId;
     meta.freePages.addAll([512, 1024]);
-    meta.dataPages['1'] = [1400, 1800];
-    meta.dataPages['2'] = [2000];
-    meta.dataPages['3'] = [2400, 2600];
-    meta.dataPages['4'] = [3000, 3200];
+    meta.repositories['users'] = {
+      '0': [1400, 1800],
+      '1': [2000]
+    };
+    meta.repositories['animals'] = {
+      '0': [2000],
+      '1': [2400, 2600]
+    };
+
+    print(json.encode(meta));
 
     expect(json.encode(meta), jsonData);
   });
@@ -29,24 +36,16 @@ void main() {
     expect(meta.freePages.contains(512), true);
     expect(meta.freePages.contains(1024), true);
 
-    expect(meta.dataPages.containsKey('1'), true);
-    expect(meta.dataPages['1'].length, 2);
-    expect(meta.dataPages['1'].contains(1400), true);
-    expect(meta.dataPages['1'].contains(1800), true);
+    expect(meta.repositories.containsKey('users'), true);
+    expect(meta.repositories['users'].length, 2);
+    expect(meta.repositories['users']['0'][0], 1400);
+    expect(meta.repositories['users']['0'][1], 1800);
 
-    expect(meta.dataPages.containsKey('2'), true);
-    expect(meta.dataPages['2'].length, 1);
-    expect(meta.dataPages['2'].contains(2000), true);
-
-    expect(meta.dataPages.containsKey('3'), true);
-    expect(meta.dataPages['3'].length, 2);
-    expect(meta.dataPages['3'].contains(2400), true);
-    expect(meta.dataPages['3'].contains(2600), true);
-
-    expect(meta.dataPages.containsKey('4'), true);
-    expect(meta.dataPages['4'].length, 2);
-    expect(meta.dataPages['4'].contains(3000), true);
-    expect(meta.dataPages['4'].contains(3200), true);
+    expect(meta.repositories.containsKey('animals'), true);
+    expect(meta.repositories['animals'].length, 2);
+    expect(meta.repositories['animals']['0'][0], 2000);
+    expect(meta.repositories['animals']['1'][0], 2400);
+    expect(meta.repositories['animals']['1'][1], 2600);
   });
 
   test('Get next ID', () {
