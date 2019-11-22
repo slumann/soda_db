@@ -5,12 +5,12 @@ import 'package:test/test.dart';
 
 void main() {
   final jsonData =
-      '{"pageSize":1000,"dbVersion":1,"nextId":2,"freePages":[512,1024],"repositories":'
+      '{"dbVersion":1,"nextId":2,"freePages":[512,1024],"repositories":'
       '{"users":{"0":[1400,1800],"1":[2000]},'
       '"animals":{"0":[2000],"1":[2400,2600]}}}';
 
   test('Serialize meta', () {
-    var meta = MetaData(1000);
+    var meta = MetaData();
     meta.nextId;
     meta.nextId;
     meta.freePages.addAll([512, 1024]);
@@ -23,14 +23,11 @@ void main() {
       '1': [2400, 2600]
     };
 
-    print(json.encode(meta));
-
     expect(json.encode(meta), jsonData);
   });
 
   test('Deserialize meta', () {
     var meta = MetaData.fromMap(json.decode(jsonData));
-    expect(meta.pageSize, 1000);
     expect(meta.dbVersion, 1);
     expect(meta.nextId, 2);
     expect(meta.freePages.length, 2);
@@ -50,7 +47,7 @@ void main() {
   });
 
   test('Get next ID', () {
-    var meta = MetaData(1000);
+    var meta = MetaData();
     expect(meta.nextId, 0);
     expect(meta.nextId, 1);
   });
