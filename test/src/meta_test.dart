@@ -11,8 +11,8 @@ void main() {
 
   test('Serialize meta', () {
     var meta = MetaData();
-    meta.nextId;
-    meta.nextId;
+    meta.createNextId;
+    meta.createNextId;
     meta.freePages.addAll([512, 1024]);
     meta.repositories['users'] = {
       '0': [1400, 1800],
@@ -29,7 +29,7 @@ void main() {
   test('Deserialize meta', () {
     var meta = MetaData.fromMap(json.decode(jsonData));
     expect(meta.dbVersion, 1);
-    expect(meta.nextId, 2);
+    expect(meta.createNextId, 2);
     expect(meta.freePages.length, 2);
     expect(meta.freePages.contains(512), true);
     expect(meta.freePages.contains(1024), true);
@@ -48,7 +48,7 @@ void main() {
 
   test('Get next ID', () {
     var meta = MetaData();
-    expect(meta.nextId, 0);
-    expect(meta.nextId, 1);
+    expect(meta.createNextId, 0);
+    expect(meta.createNextId, 1);
   });
 }
