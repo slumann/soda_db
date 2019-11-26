@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
@@ -6,13 +8,19 @@ import 'package:soda_db/src/meta_data.dart';
 class Database {
   final File _file;
   final _pageSize = 512;
+  final _ioQueue = DoubleLinkedQueue<_IORequest>();
+  var _ioActive = false;
   RandomAccessFile _metaFile;
   RandomAccessFile _pageFile;
   MetaData _metaData;
 
   Database(this._file);
 
-  Future<void> open() async {
+  Future<void> open() {
+    return _addToQueue(() => _open());
+  }
+
+  Future<void> _open() async {
     if (_metaFile != null) {
       return;
     }
@@ -42,7 +50,11 @@ class Database {
     _metaData = MetaData.fromMap(json.decode(String.fromCharCodes(data)));
   }
 
-  Future<int> write(String repo, int id, String data) async {
+  Future<int> write(String repo, int id, String data) {
+    return _addToQueue(() => _write(repo, id, data));
+  }
+
+  Future<int> _write(String repo, int id, String data) async {
     if (_metaFile == null) {
       throw StateError('Database not opened');
     }
@@ -102,7 +114,11 @@ class Database {
     return pages;
   }
 
-  Future<String> read(String repo, int id) async {
+  Future<String> read(String repo, int id) {
+    return _addToQueue(() => _read(repo, id));
+  }
+
+  Future<String> _read(String repo, int id) async {
     if (_metaFile == null) {
       throw StateError('Database not opened');
     }
@@ -127,7 +143,11 @@ class Database {
     return buffer.toString();
   }
 
-  Future<Map<int, String>> readAll(String repo) async {
+  Future<Map<int, String>> readAll(String repo) {
+    return _addToQueue(() => _readAll(repo));
+  }
+
+  Future<Map<int, String>> _readAll(String repo) async {
     if (_metaFile == null) {
       throw StateError('Database not opened');
     }
@@ -136,13 +156,17 @@ class Database {
     if (_metaData.repositories[repo] != null) {
       for (var entry in _metaData.repositories[repo].entries) {
         var id = int.parse(entry.key);
-        result[id] = await read(repo, id);
+        result[id] = await _read(repo, id);
       }
     }
     return result;
   }
 
-  Future<bool> delete(String repo, int id) async {
+  Future<bool> delete(String repo, int id) {
+    return _addToQueue(() => _delete(repo, id));
+  }
+
+  Future<bool> _delete(String repo, int id) async {
     if (_metaFile == null) {
       throw StateError('Database not opened');
     }
@@ -157,7 +181,11 @@ class Database {
     return false;
   }
 
-  Future<void> close() async {
+  Future<void> close() {
+    return _addToQueue(() => _close());
+  }
+
+  Future<void> _close() async {
     await _pageFile?.flush();
     await _pageFile?.unlock();
     await _pageFile?.close();
@@ -166,5 +194,44 @@ class Database {
     await _metaFile?.close();
     _pageFile = null;
     _metaFile = null;
+  }
+
+  Future<T> _addToQueue<T>(Function function) {
+    var request = _IORequest<T>(function);
+    _ioQueue.add(request);
+    _processQueue();
+    return request.result;
+  }
+
+  Future<void> _processQueue() async {
+    if (_ioActive) return;
+    _ioActive = true;
+
+    while (_ioQueue.isNotEmpty) {
+      var request = _ioQueue.removeFirst();
+      try {
+        request.finish(await request.action.call());
+      } catch (e) {
+        request.error(e);
+      }
+    }
+    _ioActive = false;
+  }
+}
+
+class _IORequest<T> {
+  final Function action;
+  final _completer = Completer<T>();
+
+  _IORequest(this.action);
+
+  Future<T> get result => _completer.future;
+
+  void finish(T result) {
+    _completer.complete(result);
+  }
+
+  void error(dynamic error) {
+    _completer.completeError(error);
   }
 }

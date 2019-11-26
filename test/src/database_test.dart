@@ -33,6 +33,10 @@ void main() async {
   }
 
   setUp(() async {
+    var tmpDir = File('test/tmp/');
+    if (tmpDir.existsSync()) {
+      tmpDir.deleteSync(recursive: true);
+    }
     file.createSync(recursive: true);
     db = Database(file);
   });
@@ -258,6 +262,33 @@ void main() async {
 
     test('Delete from non existing repository', () async {
       expect(false, await db.delete('test', 0));
+    });
+  });
+
+  group('Concurrent access', () {
+    setUp(() async {
+      await db.open();
+    });
+
+    test('Parallel access', () {
+      // This should not throw any FileSystemExceptions
+      db.write('test', null, 'some test data');
+      db.read('test', 0);
+      db.write('test', null, 'some test data');
+      db.read('test', 1);
+      db.delete('test', 0);
+      db.readAll('test');
+    });
+
+    test('Sequential I/O', () async {
+      db.write('test', null, 'some test data');
+      db.write('test', null, 'some more test data');
+      var entry = db.read('test', 0);
+      await db.delete('test', 0);
+      var allEntries = db.readAll('test');
+
+      expect(await entry, 'some test data');
+      expect(await allEntries, {1: 'some more test data'});
     });
   });
 }
