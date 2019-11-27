@@ -39,7 +39,7 @@ class Database {
 
   Future<void> _writeMeta() async {
     await _metaFile.setPosition(0);
-    var data = json.encode(_metaData);
+    var data = jsonEncode(_metaData);
     await _metaFile.writeString(data);
     await _metaFile.truncate(data.length);
   }
@@ -47,7 +47,7 @@ class Database {
   Future<void> _readMeta() async {
     await _metaFile.setPosition(0);
     var data = await _metaFile.read(await _metaFile.length());
-    _metaData = MetaData.fromMap(json.decode(String.fromCharCodes(data)));
+    _metaData = MetaData.fromMap(jsonDecode(String.fromCharCodes(data)));
   }
 
   Future<int> write(String repo, int id, String data) {
