@@ -2,11 +2,11 @@ class MetaData {
   int _dbVersion = 1;
   int _nextId = 0;
   List<int> freePages;
-  Map<String, Map<String, List<int>>> repositories;
+  Map<String, Map<String, MetaEntity>> groups;
 
   MetaData()
       : freePages = [],
-        repositories = {};
+        groups = {};
 
   int get dbVersion => _dbVersion;
 
@@ -16,13 +16,12 @@ class MetaData {
     _dbVersion = map['dbVersion'];
     _nextId = map['nextId'];
     freePages = List<int>.from(map['freePages']) ?? [];
-    repositories = {};
-    var repos = map['repositories'] ?? {};
-    repos.forEach((repoName, entityMap) {
-      repositories.putIfAbsent(repoName, () => {});
-      repos[repoName].forEach((entityName, pageList) {
-        var pages = List<int>.from(pageList) ?? [];
-        repositories[repoName][entityName] = pages;
+    groups = {};
+    var groupMaps = map['groups'] ?? {};
+    groupMaps.forEach((groupId, groupMap) {
+      groups.putIfAbsent(groupId, () => {});
+      groupMaps[groupId].forEach((entityId, entityMap) {
+        groups[groupId][entityId] = MetaEntity.fromMap(entityMap);
       });
     });
   }
@@ -32,7 +31,26 @@ class MetaData {
       'dbVersion': _dbVersion,
       'nextId': _nextId,
       'freePages': freePages,
-      'repositories': repositories,
+      'groups': groups,
     };
+  }
+}
+
+class MetaEntity {
+  int lastPageSize;
+  List<int> pages;
+
+  MetaEntity(this.lastPageSize, this.pages);
+
+  Map<String, dynamic> toJson() {
+    return {
+      'lps': lastPageSize,
+      'pgs': pages,
+    };
+  }
+
+  MetaEntity.fromMap(Map<String, dynamic> map) {
+    lastPageSize = map['lps'];
+    pages = List<int>.from(map['pgs']) ?? [];
   }
 }

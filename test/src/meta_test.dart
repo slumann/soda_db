@@ -4,23 +4,22 @@ import 'package:soda_db/src/meta_data.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final jsonData =
-      '{"dbVersion":1,"nextId":2,"freePages":[512,1024],"repositories":'
-      '{"users":{"0":[1400,1800],"1":[2000]},'
-      '"animals":{"0":[2000],"1":[2400,2600]}}}';
+  final jsonData = '{"dbVersion":1,"nextId":2,"freePages":[512,1024],"groups":'
+      '{"users":{"0":{"lps":128,"pgs":[1400,1800]},"1":{"lps":128,"pgs":[2000]}},'
+      '"animals":{"0":{"lps":256,"pgs":[2000]},"1":{"lps":256,"pgs":[2400,2600]}}}}';
 
   test('Serialize meta', () {
     var meta = MetaData();
     meta.createNextId;
     meta.createNextId;
     meta.freePages.addAll([512, 1024]);
-    meta.repositories['users'] = {
-      '0': [1400, 1800],
-      '1': [2000]
+    meta.groups['users'] = {
+      '0': MetaEntity(128, [1400, 1800]),
+      '1': MetaEntity(128, [2000])
     };
-    meta.repositories['animals'] = {
-      '0': [2000],
-      '1': [2400, 2600]
+    meta.groups['animals'] = {
+      '0': MetaEntity(256, [2000]),
+      '1': MetaEntity(256, [2400, 2600])
     };
 
     expect(json.encode(meta), jsonData);
@@ -34,16 +33,19 @@ void main() {
     expect(meta.freePages.contains(512), true);
     expect(meta.freePages.contains(1024), true);
 
-    expect(meta.repositories.containsKey('users'), true);
-    expect(meta.repositories['users'].length, 2);
-    expect(meta.repositories['users']['0'][0], 1400);
-    expect(meta.repositories['users']['0'][1], 1800);
+    expect(meta.groups.containsKey('users'), true);
+    expect(meta.groups['users'].length, 2);
+    expect(meta.groups['users']['0'].pages, [1400, 1800]);
+    expect(meta.groups['users']['0'].lastPageSize, 128);
+    expect(meta.groups['users']['1'].pages, [2000]);
+    expect(meta.groups['users']['1'].lastPageSize, 128);
 
-    expect(meta.repositories.containsKey('animals'), true);
-    expect(meta.repositories['animals'].length, 2);
-    expect(meta.repositories['animals']['0'][0], 2000);
-    expect(meta.repositories['animals']['1'][0], 2400);
-    expect(meta.repositories['animals']['1'][1], 2600);
+    expect(meta.groups.containsKey('animals'), true);
+    expect(meta.groups['animals'].length, 2);
+    expect(meta.groups['animals']['0'].pages, [2000]);
+    expect(meta.groups['animals']['0'].lastPageSize, 256);
+    expect(meta.groups['animals']['1'].pages, [2400, 2600]);
+    expect(meta.groups['animals']['1'].lastPageSize, 256);
   });
 
   test('Get next ID', () {

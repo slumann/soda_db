@@ -64,13 +64,13 @@ class Database {
     var pages = [];
 
     if (id == null ||
-        _metaData.repositories[repo] == null ||
-        !_metaData.repositories[repo].containsKey(id.toString())) {
-      _metaData.repositories.putIfAbsent(repo, () => {});
+        _metaData.groups[repo] == null ||
+        !_metaData.groups[repo].containsKey(id.toString())) {
+      _metaData.groups.putIfAbsent(repo, () => {});
       pages = await _getFreePages(pageCount);
       id = _metaData.createNextId;
     } else {
-      pages = _metaData.repositories[repo][id.toString()];
+      pages = _metaData.groups[repo][id.toString()].pages;
       var diffCount = pageCount - pages.length;
       if (diffCount > 0) {
         pages.addAll(await _getFreePages(pageCount - pages.length));
@@ -88,7 +88,7 @@ class Database {
       await _pageFile
           .writeString(data.substring(i * _pageSize, ((i + 1) * _pageSize)));
     }
-    _metaData.repositories[repo][id.toString()] = pages;
+    _metaData.groups[repo][id.toString()] = MetaEntity(0, pages);
     await _writeMeta();
     return id;
   }
@@ -124,12 +124,12 @@ class Database {
     }
 
     if (id == null ||
-        _metaData.repositories[repo] == null ||
-        !_metaData.repositories[repo].containsKey(id.toString())) {
+        _metaData.groups[repo] == null ||
+        !_metaData.groups[repo].containsKey(id.toString())) {
       return null;
     }
 
-    var pages = _metaData.repositories[repo][id.toString()];
+    var pages = _metaData.groups[repo][id.toString()].pages;
     var buffer = StringBuffer();
     var byte;
     for (var page in pages) {
@@ -153,8 +153,8 @@ class Database {
     }
 
     var result = <int, String>{};
-    if (_metaData.repositories[repo] != null) {
-      for (var entry in _metaData.repositories[repo].entries) {
+    if (_metaData.groups[repo] != null) {
+      for (var entry in _metaData.groups[repo].entries) {
         var id = int.parse(entry.key);
         result[id] = await _read(repo, id);
       }
@@ -171,10 +171,10 @@ class Database {
       throw StateError('Database not opened');
     }
 
-    if (_metaData.repositories[repo] != null &&
-        _metaData.repositories[repo].containsKey(id.toString())) {
-      _metaData.freePages.addAll(_metaData.repositories[repo][id.toString()]);
-      _metaData.repositories[repo].remove(id.toString());
+    if (_metaData.groups[repo] != null &&
+        _metaData.groups[repo].containsKey(id.toString())) {
+      _metaData.freePages.addAll(_metaData.groups[repo][id.toString()].pages);
+      _metaData.groups[repo].remove(id.toString());
       await _writeMeta();
       return true;
     }

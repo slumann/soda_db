@@ -53,7 +53,7 @@ void main() async {
       expect(metaData.dbVersion, 1);
       expect(metaData.createNextId, 0);
       expect(metaData.freePages, []);
-      expect(metaData.repositories, {});
+      expect(metaData.groups, {});
     });
 
     test('Read existing MetaData', () async {
@@ -75,12 +75,14 @@ void main() async {
       await db.write('test 2', null, 'some more test data');
       var metaData = readMetaFile();
 
-      expect(metaData.repositories.containsKey('test 1'), true);
-      expect(metaData.repositories['test 1'].containsKey('0'), true);
-      expect(metaData.repositories['test 1']['0'], [0]);
-      expect(metaData.repositories.containsKey('test 2'), true);
-      expect(metaData.repositories['test 2'].containsKey('1'), true);
-      expect(metaData.repositories['test 2']['1'], [512]);
+      expect(metaData.groups.containsKey('test 1'), true);
+      var groupTest1 = metaData.groups['test 1'];
+      expect(groupTest1.containsKey('0'), true);
+      expect(groupTest1['0'].pages, [0]);
+      expect(metaData.groups.containsKey('test 2'), true);
+      var groupTest2 = metaData.groups['test 2'];
+      expect(groupTest2.containsKey('1'), true);
+      expect(groupTest2['1'].pages, [512]);
     });
 
     test('Delete entry', () async {
@@ -90,7 +92,7 @@ void main() async {
       await db.delete('test', id);
       var metaData = readMetaFile();
 
-      expect(metaData.repositories['test'][id.toString()], null);
+      expect(metaData.groups['test'][id.toString()], null);
       expect(metaData.freePages.contains(0), true);
     });
 
