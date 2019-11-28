@@ -50,11 +50,11 @@ class Database {
     _metaData = MetaData.fromMap(jsonDecode(String.fromCharCodes(data)));
   }
 
-  Future<int> write(String repo, int id, String data) {
-    return _addToQueue(() => _write(repo, id, data));
+  Future<int> writeEntity(String groupId, int entityId, String data) {
+    return _addToQueue(() => _writeEntity(groupId, entityId, data));
   }
 
-  Future<int> _write(String repo, int id, String data) async {
+  Future<int> _writeEntity(String groupId, int entityId, String data) async {
     if (_metaFile == null) {
       throw StateError('Database not opened');
     }
@@ -63,14 +63,14 @@ class Database {
     var pageCount = (data.length / _pageSize).ceil();
     var pages = [];
 
-    if (id == null ||
-        _metaData.groups[repo] == null ||
-        !_metaData.groups[repo].containsKey(id.toString())) {
-      _metaData.groups.putIfAbsent(repo, () => {});
+    if (entityId == null ||
+        _metaData.groups[groupId] == null ||
+        !_metaData.groups[groupId].containsKey(entityId.toString())) {
+      _metaData.groups.putIfAbsent(groupId, () => {});
       pages = await _getFreePages(pageCount);
-      id = _metaData.createNextId;
+      entityId = _metaData.createNextId;
     } else {
-      pages = _metaData.groups[repo][id.toString()].pages;
+      pages = _metaData.groups[groupId][entityId.toString()].pages;
       var diffCount = pageCount - pages.length;
       if (diffCount > 0) {
         pages.addAll(await _getFreePages(pageCount - pages.length));
@@ -88,9 +88,9 @@ class Database {
       await _pageFile
           .writeString(data.substring(i * _pageSize, ((i + 1) * _pageSize)));
     }
-    _metaData.groups[repo][id.toString()] = MetaEntity(0, pages);
+    _metaData.groups[groupId][entityId.toString()] = MetaEntity(0, pages);
     await _writeMeta();
-    return id;
+    return entityId;
   }
 
   String _padToPageSize(String input) {
@@ -114,22 +114,22 @@ class Database {
     return pages;
   }
 
-  Future<String> read(String repo, int id) {
-    return _addToQueue(() => _read(repo, id));
+  Future<String> readEntity(String groupId, int entityId) {
+    return _addToQueue(() => _readEntity(groupId, entityId));
   }
 
-  Future<String> _read(String repo, int id) async {
+  Future<String> _readEntity(String groupId, int entityId) async {
     if (_metaFile == null) {
       throw StateError('Database not opened');
     }
 
-    if (id == null ||
-        _metaData.groups[repo] == null ||
-        !_metaData.groups[repo].containsKey(id.toString())) {
+    if (entityId == null ||
+        _metaData.groups[groupId] == null ||
+        !_metaData.groups[groupId].containsKey(entityId.toString())) {
       return null;
     }
 
-    var pages = _metaData.groups[repo][id.toString()].pages;
+    var pages = _metaData.groups[groupId][entityId.toString()].pages;
     var buffer = StringBuffer();
     var byte;
     for (var page in pages) {
@@ -143,38 +143,39 @@ class Database {
     return buffer.toString();
   }
 
-  Future<Map<int, String>> readAll(String repo) {
-    return _addToQueue(() => _readAll(repo));
+  Future<Map<int, String>> readGroup(String groupId) {
+    return _addToQueue(() => _readGroup(groupId));
   }
 
-  Future<Map<int, String>> _readAll(String repo) async {
+  Future<Map<int, String>> _readGroup(String groupId) async {
     if (_metaFile == null) {
       throw StateError('Database not opened');
     }
 
     var result = <int, String>{};
-    if (_metaData.groups[repo] != null) {
-      for (var entry in _metaData.groups[repo].entries) {
+    if (_metaData.groups[groupId] != null) {
+      for (var entry in _metaData.groups[groupId].entries) {
         var id = int.parse(entry.key);
-        result[id] = await _read(repo, id);
+        result[id] = await _readEntity(groupId, id);
       }
     }
     return result;
   }
 
-  Future<bool> delete(String repo, int id) {
-    return _addToQueue(() => _delete(repo, id));
+  Future<bool> deleteEntity(String groupId, int entityId) {
+    return _addToQueue(() => _deleteEntity(groupId, entityId));
   }
 
-  Future<bool> _delete(String repo, int id) async {
+  Future<bool> _deleteEntity(String groupId, int entityId) async {
     if (_metaFile == null) {
       throw StateError('Database not opened');
     }
 
-    if (_metaData.groups[repo] != null &&
-        _metaData.groups[repo].containsKey(id.toString())) {
-      _metaData.freePages.addAll(_metaData.groups[repo][id.toString()].pages);
-      _metaData.groups[repo].remove(id.toString());
+    if (_metaData.groups[groupId] != null &&
+        _metaData.groups[groupId].containsKey(entityId.toString())) {
+      _metaData.freePages
+          .addAll(_metaData.groups[groupId][entityId.toString()].pages);
+      _metaData.groups[groupId].remove(entityId.toString());
       await _writeMeta();
       return true;
     }
