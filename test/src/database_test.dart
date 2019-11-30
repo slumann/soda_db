@@ -130,7 +130,7 @@ void main() async {
       expect(error.message, 'Database not opened');
     });
 
-    test('on readAll', () async {
+    test('on readGroup', () async {
       StateError error;
       try {
         await db.readGroup('test');
@@ -222,7 +222,7 @@ void main() async {
       expect(null, await db.readEntity('test', null));
     });
 
-    test('Read non existing repository', () async {
+    test('Read non existing group', () async {
       expect(null, await db.readEntity('test', 0));
     });
 
@@ -231,25 +231,25 @@ void main() async {
       expect(null, await db.readEntity('test', 1));
     });
 
-    test('ReadAll non existing repository', () async {
+    test('ReadGroup non existing group', () async {
       expect({}, await db.readGroup('test'));
     });
 
-    test('ReadAll empty repository', () async {
+    test('ReadGroup empty group', () async {
       var id = await db.writeEntity('test', null, 'some test data');
       await db.deleteEntity('test', id);
       expect({}, await db.readGroup('test'));
     });
 
-    test('ReadAll non empty repository', () async {
+    test('ReadGroup non empty group', () async {
       var idFirst = await db.writeEntity('test', null, 'some test data');
       var idSecond = await db.writeEntity('test', null, 'some more test data');
 
-      var repo = await db.readGroup('test');
+      var group = await db.readGroup('test');
 
-      expect(repo.length, 2);
-      expect(repo[idFirst], 'some test data');
-      expect(repo[idSecond], 'some more test data');
+      expect(group.length, 2);
+      expect(group[idFirst], 'some test data');
+      expect(group[idSecond], 'some more test data');
     });
 
     test('Delete entry', () async {
@@ -262,8 +262,13 @@ void main() async {
       expect(false, await db.deleteEntity('test', 1));
     });
 
-    test('Delete from non existing repository', () async {
+    test('Delete from non existing group', () async {
       expect(false, await db.deleteEntity('test', 0));
+    });
+
+    test('Read/Write binary data', () async {
+      await db.writeEntity('test', null, 'String with binary \x00\x01\x02');
+      expect('String with binary \x00\x01\x02', await db.readEntity('test', 0));
     });
   });
 

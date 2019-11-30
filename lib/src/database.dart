@@ -59,9 +59,8 @@ class Database {
       throw StateError('Database not opened');
     }
 
-    data = _padToPageSize(data);
     var pageCount = (data.length / _pageSize).ceil();
-    var pages = [];
+    var pages = <int>[];
 
     if (entityId == null ||
         _metaData.groups[groupId] == null ||
@@ -83,19 +82,19 @@ class Database {
       }
     }
 
+    var offset = data.length % _pageSize;
+    var lastPageSize = offset != 0 ? offset : _pageSize;
     for (var i = 0; i < pageCount; i++) {
+      var pageSize = (i == pageCount - 1) ? lastPageSize : _pageSize;
       await _pageFile.setPosition(pages[i]);
-      await _pageFile
-          .writeString(data.substring(i * _pageSize, ((i + 1) * _pageSize)));
+      var start = i * _pageSize;
+      var end = start + pageSize;
+      await _pageFile.writeString(data.substring(start, end));
     }
-    _metaData.groups[groupId][entityId.toString()] = MetaEntity(0, pages);
+    _metaData.groups[groupId][entityId.toString()] =
+        MetaEntity(lastPageSize, pages);
     await _writeMeta();
     return entityId;
-  }
-
-  String _padToPageSize(String input) {
-    return input.padRight(
-        (input.length / _pageSize).ceil() * _pageSize, '\x00');
   }
 
   Future<List<int>> _getFreePages(int count) async {
@@ -106,9 +105,15 @@ class Database {
     }
     if (count > 0) {
       var fileEnd = await _pageFile.length();
+      var offset = 0;
+      if (fileEnd % _pageSize == 0) {
+        offset = fileEnd;
+      } else {
+        offset = fileEnd + _pageSize - (fileEnd % _pageSize);
+      }
       for (var i = 0; i < count; i++) {
-        pages.add(fileEnd);
-        fileEnd += _pageSize;
+        pages.add(offset);
+        offset += _pageSize;
       }
     }
     return pages;
@@ -129,15 +134,17 @@ class Database {
       return null;
     }
 
-    var pages = _metaData.groups[groupId][entityId.toString()].pages;
+    var entity = _metaData.groups[groupId][entityId.toString()];
+    var pages = entity.pages;
     var buffer = StringBuffer();
     var byte;
-    for (var page in pages) {
-      await _pageFile.setPosition(page);
-      byte = await _pageFile.readByte();
-      for (var i = 0; i < _pageSize && byte != 0; i++) {
-        buffer.write(String.fromCharCode(byte));
+    for (var i = 0; i < pages.length; i++) {
+      var pageSize = i == (pages.length - 1) ? entity.lastPageSize : _pageSize;
+      await _pageFile.setPosition(pages[i]);
+      ;
+      for (var i = 0; i < pageSize; i++) {
         byte = await _pageFile.readByte();
+        buffer.write(String.fromCharCode(byte));
       }
     }
     return buffer.toString();
