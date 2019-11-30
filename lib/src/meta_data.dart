@@ -1,20 +1,30 @@
 class MetaData {
   int _dbVersion = 1;
-  int _nextId = 0;
+  Map<String, int> _ids;
   List<int> freePages;
   Map<String, Map<String, MetaEntity>> groups;
 
   MetaData()
-      : freePages = [],
+      : _ids = {},
+        freePages = [],
         groups = {};
 
   int get dbVersion => _dbVersion;
 
-  int get createNextId => _nextId++;
+  int createId(String group) {
+    if (!_ids.containsKey(group)) {
+      _ids[group] = 0;
+    } else {
+      _ids[group]++;
+    }
+    return _ids[group];
+  }
 
   MetaData.fromMap(Map<String, dynamic> map) {
     _dbVersion = map['dbVersion'];
-    _nextId = map['nextId'];
+    _ids = {};
+    var idsMap = map['ids'] ?? {};
+    idsMap.forEach((group, id) => _ids[group] = id);
     freePages = List<int>.from(map['freePages']) ?? [];
     groups = {};
     var groupMaps = map['groups'] ?? {};
@@ -29,7 +39,7 @@ class MetaData {
   Map<String, dynamic> toJson() {
     return {
       'dbVersion': _dbVersion,
-      'nextId': _nextId,
+      'ids': _ids,
       'freePages': freePages,
       'groups': groups,
     };

@@ -51,21 +51,21 @@ void main() async {
       await db.open();
       var metaData = readMetaFile();
       expect(metaData.dbVersion, 1);
-      expect(metaData.createNextId, 0);
+      expect(metaData.createId('test'), 0);
       expect(metaData.freePages, []);
       expect(metaData.groups, {});
     });
 
     test('Read existing MetaData', () async {
       var metaData = MetaData();
-      metaData.createNextId;
+      metaData.createId('test');
       metaData.freePages = [512, 1024];
       writeMetaFile(metaData);
 
       await db.open();
       metaData = readMetaFile();
 
-      expect(metaData.createNextId, 1);
+      expect(metaData.createId('test'), 1);
       expect(metaData.freePages, [512, 1024]);
     });
 
@@ -81,8 +81,8 @@ void main() async {
       expect(groupTest1['0'].pages, [0]);
       expect(metaData.groups.containsKey('test 2'), true);
       var groupTest2 = metaData.groups['test 2'];
-      expect(groupTest2.containsKey('1'), true);
-      expect(groupTest2['1'].pages, [512]);
+      expect(groupTest2.containsKey('0'), true);
+      expect(groupTest2['0'].pages, [512]);
     });
 
     test('Delete entry', () async {

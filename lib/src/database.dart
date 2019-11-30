@@ -67,7 +67,7 @@ class Database {
         !_metaData.groups[groupId].containsKey(entityId.toString())) {
       _metaData.groups.putIfAbsent(groupId, () => {});
       pages = await _getFreePages(pageCount);
-      entityId = _metaData.createNextId;
+      entityId = _metaData.createId(groupId);
     } else {
       pages = _metaData.groups[groupId][entityId.toString()].pages;
       var diffCount = pageCount - pages.length;
