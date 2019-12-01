@@ -141,7 +141,6 @@ class Database {
     for (var i = 0; i < pages.length; i++) {
       var pageSize = i == (pages.length - 1) ? entity.lastPageSize : _pageSize;
       await _pageFile.setPosition(pages[i]);
-      ;
       for (var i = 0; i < pageSize; i++) {
         byte = await _pageFile.readByte();
         buffer.write(String.fromCharCode(byte));
@@ -183,6 +182,25 @@ class Database {
       _metaData.freePages
           .addAll(_metaData.groups[groupId][entityId.toString()].pages);
       _metaData.groups[groupId].remove(entityId.toString());
+      await _writeMeta();
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> deleteGroup(String groupId) {
+    return _addToQueue(() => _deleteGroup(groupId));
+  }
+
+  Future<bool> _deleteGroup(String groupId) async {
+    if (_metaFile == null) {
+      throw StateError('Database not opened');
+    }
+
+    if (_metaData.groups[groupId] != null) {
+      _metaData.groups[groupId].values.forEach(
+          (metaEntity) => _metaData.freePages.addAll(metaEntity.pages));
+      _metaData.groups[groupId] = null;
       await _writeMeta();
       return true;
     }

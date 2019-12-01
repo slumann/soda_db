@@ -30,7 +30,7 @@ class MetaData {
     var groupMaps = map['groups'] ?? {};
     groupMaps.forEach((groupId, groupMap) {
       groups.putIfAbsent(groupId, () => {});
-      groupMaps[groupId].forEach((entityId, entityMap) {
+      groupMap?.forEach((entityId, entityMap) {
         groups[groupId][entityId] = MetaEntity.fromMap(entityMap);
       });
     });

@@ -107,6 +107,15 @@ void main() async {
 
       expect(metaData.freePages, [512]);
     });
+
+    test('Delete group frees pages', () async {
+      await db.open();
+      await db.writeEntity('test', null, createRandomString(1024));
+      await db.deleteGroup('test');
+      var metaData = readMetaFile();
+
+      expect(metaData.freePages, [0, 512]);
+    });
   });
 
   group('Database not opened', () {
@@ -140,10 +149,20 @@ void main() async {
       expect(error.message, 'Database not opened');
     });
 
-    test('on delete', () async {
+    test('on delete entity', () async {
       StateError error;
       try {
         await db.deleteEntity('test', 1);
+      } on StateError catch (e) {
+        error = e;
+      }
+      expect(error.message, 'Database not opened');
+    });
+
+    test('on delete group', () async {
+      StateError error;
+      try {
+        await db.deleteGroup('test');
       } on StateError catch (e) {
         error = e;
       }
@@ -219,26 +238,26 @@ void main() async {
     });
 
     test('Read null id', () async {
-      expect(null, await db.readEntity('test', null));
+      expect(await db.readEntity('test', null), null);
     });
 
     test('Read non existing group', () async {
-      expect(null, await db.readEntity('test', 0));
+      expect(await db.readEntity('test', 0), null);
     });
 
     test('Read non existing id', () async {
       await db.writeEntity('test', null, 'some tet data');
-      expect(null, await db.readEntity('test', 1));
+      expect(await db.readEntity('test', 1), null);
     });
 
     test('ReadGroup non existing group', () async {
-      expect({}, await db.readGroup('test'));
+      expect(await db.readGroup('test'), {});
     });
 
     test('ReadGroup empty group', () async {
       var id = await db.writeEntity('test', null, 'some test data');
       await db.deleteEntity('test', id);
-      expect({}, await db.readGroup('test'));
+      expect(await db.readGroup('test'), {});
     });
 
     test('ReadGroup non empty group', () async {
@@ -254,21 +273,32 @@ void main() async {
 
     test('Delete entry', () async {
       var id = await db.writeEntity('test', null, 'some test data');
-      expect(true, await db.deleteEntity('test', id));
+      expect(await db.deleteEntity('test', id), true);
     });
 
     test('Delete non existing entry', () async {
       await db.writeEntity('test', null, 'some test data');
-      expect(false, await db.deleteEntity('test', 1));
+      expect(await db.deleteEntity('test', 1), false);
     });
 
     test('Delete from non existing group', () async {
-      expect(false, await db.deleteEntity('test', 0));
+      expect(await db.deleteEntity('test', 0), false);
     });
 
     test('Read/Write binary data', () async {
       await db.writeEntity('test', null, 'String with binary \x00\x01\x02');
-      expect('String with binary \x00\x01\x02', await db.readEntity('test', 0));
+      expect(await db.readEntity('test', 0), 'String with binary \x00\x01\x02');
+    });
+
+    test('Delete non existing group', () async {
+      expect(await db.deleteGroup('test'), false);
+    });
+
+    test('Delete group', () async {
+      await db.writeEntity('test', null, 'some test data');
+      expect(await db.readGroup('test'), {0: 'some test data'});
+      expect(await db.deleteGroup('test'), true);
+      expect(await db.readGroup('test'), {});
     });
   });
 
