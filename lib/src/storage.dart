@@ -115,5 +115,10 @@ abstract class Entity {
   Map<String, Object> toJson();
 
   @override
-  bool operator ==(other) => id == other.id;
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Entity && runtimeType == other.runtimeType && _id == other._id;
+
+  @override
+  int get hashCode => _id.hashCode;
 }
