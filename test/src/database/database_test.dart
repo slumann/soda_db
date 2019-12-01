@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:soda_db/soda_db.dart';
-import 'package:soda_db/src/meta_data.dart';
+import 'package:soda_db/src/database/database.dart';
+import 'package:soda_db/src/database/meta_data.dart';
 import 'package:test/test.dart';
 
 void main() async {

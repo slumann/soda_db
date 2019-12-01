@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:soda_db/src/meta_data.dart';
+import 'package:soda_db/src/database/meta_data.dart';
 import 'package:test/test.dart';
 
 void main() {

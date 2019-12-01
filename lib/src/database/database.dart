@@ -3,7 +3,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:soda_db/src/meta_data.dart';
+import 'package:soda_db/src/database/meta_data.dart';
 
 class Database {
   final File _file;
