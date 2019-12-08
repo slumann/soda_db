@@ -56,10 +56,20 @@ void main() async {
     expect(entity.id, 0);
   });
 
-  test('Remove entity', () async {
+  test('Remove entity success', () async {
+    when(mockDB.deleteEntity('test', 1)).thenAnswer((_) => Future.value(true));
     var entity = TestEntity.withId(1);
     await repo.remove(entity);
     verify(mockDB.deleteEntity('test', 1));
+    expect(entity.id, null);
+  });
+
+  test('Remove entity fail', () async {
+    when(mockDB.deleteEntity('test', 1)).thenAnswer((_) => Future.value(false));
+    var entity = TestEntity.withId(1);
+    await repo.remove(entity);
+    verify(mockDB.deleteEntity('test', 1));
+    expect(entity.id, 1);
   });
 
   test('Clear repository', () async {
@@ -86,6 +96,8 @@ class TestEntity with SodaEntity {
 
   @override
   int get id => _fakeId ?? super.id;
+
+  void set id(int value) => _fakeId = value;
 
   @override
   Map<String, Object> toJson() {

@@ -44,7 +44,11 @@ class RepositoryImpl<T extends SodaEntity> implements Repository<T> {
 
   @override
   Future<bool> remove(T entity) async {
-    return await _db.deleteEntity(_groupId, entity.id);
+    var success = await _db.deleteEntity(_groupId, entity.id);
+    if (success) {
+      entity.id = null;
+    }
+    return success;
   }
 
   @override
