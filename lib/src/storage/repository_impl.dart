@@ -7,10 +7,10 @@ import 'package:soda_db/src/storage/storage.dart';
 
 class RepositoryImpl<T extends SodaEntity> implements Repository<T> {
   final String _groupId;
-  final EntityFactory<T> _builder;
+  final EntityFactory<T> _factory;
   final Database _db;
 
-  RepositoryImpl(this._groupId, this._builder, this._db);
+  RepositoryImpl(this._groupId, this._factory, this._db);
 
   @override
   Future<T> get(int id) async {
@@ -18,7 +18,7 @@ class RepositoryImpl<T extends SodaEntity> implements Repository<T> {
     if (data == null) {
       return null;
     } else {
-      var entity = _builder(jsonDecode(data));
+      var entity = _factory(jsonDecode(data));
       entity.id = id;
       return entity;
     }
@@ -29,7 +29,7 @@ class RepositoryImpl<T extends SodaEntity> implements Repository<T> {
     var entities = <T>[];
     var group = await _db.readGroup(_groupId);
     for (var data in group.entries) {
-      var entity = _builder(jsonDecode(data.value));
+      var entity = _factory(jsonDecode(data.value));
       entity.id = data.key;
       entities.add(entity);
     }
