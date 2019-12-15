@@ -17,7 +17,7 @@ void main() {
     test('Get repository', () {
       StateError error;
       try {
-        storage.getRepository('test_on_closed_storage');
+        storage.get('test_on_closed_storage');
       } on StateError catch (e) {
         error = e;
       }
@@ -40,7 +40,7 @@ void main() {
     test('EntityFactory is null', () {
       ArgumentError error;
       try {
-        storage.registerEntity('test', null);
+        storage.register('test', null);
       } on ArgumentError catch (e) {
         error = e;
       }
@@ -51,8 +51,8 @@ void main() {
     test('Already regsitered', () {
       ArgumentError error;
       try {
-        storage.registerEntity('test_already_registered', (map) => User());
-        storage.registerEntity('test_already_registered', (map) => User());
+        storage.register('test_already_registered', (map) => User());
+        storage.register('test_already_registered', (map) => User());
       } on ArgumentError catch (e) {
         error = e;
       }
@@ -91,7 +91,7 @@ void main() {
     test('Repository not regsitered', () {
       ArgumentError error;
       try {
-        storage.getRepository('test_not_registered');
+        storage.get('test_not_registered');
       } on ArgumentError catch (e) {
         error = e;
       }
@@ -102,8 +102,8 @@ void main() {
     test('Wrong type', () {
       ArgumentError error;
       try {
-        storage.registerEntity<Animal>('users', (map) => Animal());
-        storage.getRepository<User>('users');
+        storage.register<Animal>('users', (map) => Animal());
+        storage.get<User>('users');
       } on ArgumentError catch (e) {
         error = e;
       }
@@ -112,8 +112,8 @@ void main() {
     });
 
     test('Correct type', () {
-      storage.registerEntity<Animal>('animals', (map) => Animal());
-      var repo = storage.getRepository<Animal>('animals');
+      storage.register<Animal>('animals', (map) => Animal());
+      var repo = storage.get<Animal>('animals');
       expect(repo, isA<Repository<Animal>>());
     });
   });

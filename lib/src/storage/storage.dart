@@ -10,15 +10,15 @@ Storage get storage => _storage ??= StorageImpl();
 @visibleForTesting
 void set storage(Storage value) => _storage = value;
 
-typedef EntityFactory<T> = T Function(Map<String, dynamic>);
+typedef EntityFactory<T extends SodaEntity> = T Function(Map<String, dynamic>);
 
 abstract class Storage {
   Future<void> open(String path);
 
-  void registerEntity<T extends SodaEntity>(
-      String repoName, EntityFactory<T> factory);
+  void register<T extends SodaEntity>(
+      String repository, EntityFactory<T> factory);
 
-  Repository<T> getRepository<T extends SodaEntity>(String name);
+  Repository<T> get<T extends SodaEntity>(String repository);
 
   Future<void> close();
 }

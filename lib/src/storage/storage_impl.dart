@@ -24,28 +24,28 @@ class StorageImpl extends Storage {
   }
 
   @override
-  void registerEntity<T extends SodaEntity>(
-      String repoName, EntityFactory<T> factory) {
+  void register<T extends SodaEntity>(
+      String repository, EntityFactory<T> factory) {
     if (factory == null) {
       throw ArgumentError('EntityFactory must not be null!');
     }
 
-    if (_repositories.containsKey(repoName)) {
-      throw ArgumentError('Repository $repoName already registered!');
+    if (_repositories.containsKey(repository)) {
+      throw ArgumentError('Repository $repository already registered!');
     }
 
-    _repositories[repoName] = RepositoryImpl<T>(repoName, factory, _db);
+    _repositories[repository] = RepositoryImpl<T>(repository, factory, _db);
   }
 
   @override
-  Repository<T> getRepository<T extends SodaEntity>(String name) {
+  Repository<T> get<T extends SodaEntity>(String repository) {
     if (_db == null) {
       throw StateError('Storage not opened! Call Storage.open() first.');
     }
 
-    var repo = _repositories[name];
+    var repo = _repositories[repository];
     if (repo == null) {
-      throw ArgumentError('No such repository "$name". '
+      throw ArgumentError('No such repository "$repository". '
           'Did you forgot to call registerEntity()?');
     }
 
@@ -54,10 +54,10 @@ class StorageImpl extends Storage {
       repoType =
           repoType.substring(repoType.indexOf('<') + 1, repoType.indexOf('>'));
       throw ArgumentError(
-          'Repository "$name" is registered as Repository<$repoType>, '
+          'Repository "$repository" is registered as Repository<$repoType>, '
           'not Repository<$T>.');
     }
-    return _repositories[name];
+    return _repositories[repository];
   }
 
   @override
