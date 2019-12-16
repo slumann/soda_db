@@ -4,7 +4,6 @@ include: package:effective_dart/analysis_options.yaml
 # Uncomment to specify additional rules.
 linter:
   rules:
-  #- public_member_api_docs //TODO disabled til first release
 
 analyzer:
 #   exclude:
