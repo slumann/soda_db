@@ -6,6 +6,8 @@ import 'package:soda_db/src/storage/storage.dart';
 import 'package:soda_db/src/storage/storage_impl.dart';
 import 'package:test/test.dart';
 
+const testDir = 'test/tmp/storage_impl_test';
+
 void main() {
   Storage storage;
 
@@ -64,28 +66,28 @@ void main() {
   group('Open storage', () {
     tearDown(() async {
       await storage.close();
-      File('test/tmp/').deleteSync(recursive: true);
+      File('$testDir/').deleteSync(recursive: true);
     });
 
     test('Path ending without separator', () async {
-      await storage.open('test/tmp');
-      expect(File('test/tmp/soda.db').existsSync(), isTrue);
+      await storage.open('$testDir');
+      expect(File('$testDir/soda.db').existsSync(), isTrue);
     });
 
     test('Path ending with separator', () async {
-      await storage.open('test/tmp/');
-      expect(File('test/tmp/soda.db').existsSync(), isTrue);
+      await storage.open('$testDir/');
+      expect(File('$testDir/soda.db').existsSync(), isTrue);
     });
   });
 
   group('Get repository', () {
     setUp(() async {
-      await storage.open('test/tmp/');
+      await storage.open('$testDir/');
     });
 
     tearDown(() async {
       await storage.close();
-      File('test/tmp/').deleteSync(recursive: true);
+      File('$testDir/').deleteSync(recursive: true);
     });
 
     test('Repository not regsitered', () {

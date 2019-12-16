@@ -6,8 +6,10 @@ import 'package:soda_db/src/database/database.dart';
 import 'package:soda_db/src/database/meta_data.dart';
 import 'package:test/test.dart';
 
-void main() async {
-  final filePath = 'test/tmp/test.db';
+const testDir = 'test/tmp/database_test';
+
+void main() {
+  final filePath = '$testDir/test.db';
   final file = File(filePath);
   Database db;
 
@@ -33,7 +35,7 @@ void main() async {
   }
 
   setUp(() async {
-    var tmpDir = File('test/tmp/');
+    var tmpDir = File('$testDir/');
     if (tmpDir.existsSync()) {
       tmpDir.deleteSync(recursive: true);
     }
@@ -43,7 +45,7 @@ void main() async {
 
   tearDown(() async {
     db.close();
-    File('test/tmp/').deleteSync(recursive: true);
+    File('$testDir/').deleteSync(recursive: true);
   });
 
   group('MetaData tests', () {

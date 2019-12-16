@@ -7,7 +7,7 @@ import 'package:soda_db/src/storage/repository_impl.dart';
 import 'package:soda_db/src/storage/soda_entity.dart';
 import 'package:test/test.dart';
 
-void main() async {
+void main() {
   Database mockDB;
   Repository<TestEntity> repo;
 
