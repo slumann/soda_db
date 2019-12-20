@@ -11,6 +11,5 @@ build/
 doc/api/
 
 .idea/
-example/
 soda_db.iml
 test/tmp/
