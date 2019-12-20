@@ -1,4 +1,6 @@
-SodaDB is a lightweight and simple to use object-oriented storage for Dart and Flutter applications.
+SodaDB is a lightweight and simple to use object-oriented storage for Dart and Flutter applications,
+with type-safe access on entities.
+
 Written in pure Dart with no external or third party dependencies.
 
 ## Usage
@@ -51,7 +53,7 @@ void main() async {
 
   // Obtain repository 'users' from storage.
   // Provide type information to the get method or explicitly
-  // type your user variable to help the compiler determine the correct type.
+  // type the users variable to help the compiler determine the correct type.
   var users = storage.get<User>('users');
   
   // Save user john to repository.
@@ -80,4 +82,4 @@ void main() async {
 
 Please file feature requests and bugs at the [issue tracker][tracker].
 
-[tracker]: http://example.com/issues/replaceme
+[tracker]: https://github.com/slumann/soda_db/issues
