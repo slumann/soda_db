@@ -1,11 +1,11 @@
 name: soda_db
+version: 1.0.0
 description: Simple Object-oriented DArt DataBase
+repository: https://github.com/slumann/soda_db
+issue_tracker: https://github.com/slumann/soda_db/issues
 
 environment:
   sdk: '>=2.5.0 <3.0.0'
-
-#dependencies:
-#  path: ^1.6.0
 
 dev_dependencies:
   pedantic: ^1.8.0
