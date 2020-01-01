@@ -26,9 +26,12 @@ abstract class Storage {
   /// [SodaEntity]s of the type supported by this adapter.
   void register(TypeAdapter adapter);
 
-  /// Retrieves the [Repository] for the given [repository] name from storage.
+  /// Retrieves the [Repository] for the given [repository] name.
+  /// If the repository does not yet exist, it is created.
+  /// Once the repository is created for this name, the provided type [T]
+  /// is associated with this repository.
   Repository<T> get<T extends SodaEntity>(String repository);
 
-  /// Flushes all pending operations and than closes the storage.
+  /// Flushes all pending operations and closes the storage.
   Future<void> close();
 }
