@@ -98,7 +98,6 @@ class TestEntity with SodaEntity {
 
   void set id(int value) => _fakeId = value;
 
-  @override
   Map<String, Object> toJson() {
     return {'field': field};
   }

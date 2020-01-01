@@ -50,19 +50,9 @@ void main() {
   });
 }
 
-class EntityA with SodaEntity {
-  @override
-  Map<String, Object> toJson() {
-    return null;
-  }
-}
+class EntityA with SodaEntity {}
 
-class EntityB with SodaEntity {
-  @override
-  Map<String, Object> toJson() {
-    return null;
-  }
-}
+class EntityB with SodaEntity {}
 
 class EntityC {
   int id;

@@ -115,23 +115,9 @@ void main() {
   });
 }
 
-class User with SodaEntity {
-  String userName;
+class User with SodaEntity {}
 
-  @override
-  Map<String, Object> toJson() {
-    return {};
-  }
-}
-
-class Animal with SodaEntity {
-  String animalName;
-
-  @override
-  Map<String, Object> toJson() {
-    return {};
-  }
-}
+class Animal with SodaEntity {}
 
 class UserAdapter extends TypeAdapter<User> {
   @override

@@ -54,7 +54,6 @@ class User with SodaEntity {
 
   // Provide toJson method to serialize your entities
   // as JSON maps.
-  @override
   Map<String, Object> toJson() {
     return {
       'firstName': firstName,
