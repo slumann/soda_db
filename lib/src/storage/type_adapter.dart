@@ -5,9 +5,9 @@ abstract class TypeAdapter<T extends SodaEntity> {
   /// Gets the [Type] that is associated with this adapter.
   Type get type => T;
 
-  /// Returns the string representation of [type].
+  /// Returns the string representation of [entity].
   /// Must contain all fields that should be persisted by SodaDB.
-  String serialize(T type);
+  String serialize(T entity);
 
   /// Deserializes [data] and returns a [SodaEntity] of type [T].
   T deserialize(String data);

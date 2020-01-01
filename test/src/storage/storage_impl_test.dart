@@ -126,7 +126,7 @@ class UserAdapter extends TypeAdapter<User> {
   }
 
   @override
-  String serialize(User type) {
+  String serialize(User entity) {
     return null;
   }
 }
@@ -138,7 +138,7 @@ class AnimalAdapter extends TypeAdapter<Animal> {
   }
 
   @override
-  String serialize(Animal type) {
+  String serialize(Animal entity) {
     return null;
   }
 }
