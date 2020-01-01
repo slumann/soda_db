@@ -5,6 +5,7 @@ import 'package:soda_db/src/database/database.dart';
 import 'package:soda_db/src/storage/repository.dart';
 import 'package:soda_db/src/storage/repository_impl.dart';
 import 'package:soda_db/src/storage/soda_entity.dart';
+import 'package:soda_db/src/storage/type_adapter.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -13,7 +14,7 @@ void main() {
 
   setUp(() {
     mockDB = MockDataBase();
-    repo = RepositoryImpl('test', (map) => TestEntity.fromJson(map), mockDB);
+    repo = RepositoryImpl('test', TestEntityAdapter(), mockDB);
   });
 
   test('Get existing entity', () async {
@@ -78,8 +79,6 @@ void main() {
   });
 }
 
-buildEntity(Map<String, dynamic> map) {}
-
 class MockDataBase extends Mock implements Database {}
 
 class TestEntity with SodaEntity {
@@ -102,5 +101,17 @@ class TestEntity with SodaEntity {
   @override
   Map<String, Object> toJson() {
     return {'field': field};
+  }
+}
+
+class TestEntityAdapter extends TypeAdapter<TestEntity> {
+  @override
+  TestEntity deserialize(String data) {
+    return TestEntity.fromJson(jsonDecode(data));
+  }
+
+  @override
+  String serialize(TestEntity type) {
+    return jsonEncode(type);
   }
 }

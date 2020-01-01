@@ -4,6 +4,7 @@ import 'package:soda_db/src/storage/repository.dart';
 import 'package:soda_db/src/storage/soda_entity.dart';
 import 'package:soda_db/src/storage/storage.dart';
 import 'package:soda_db/src/storage/storage_impl.dart';
+import 'package:soda_db/src/storage/type_adapter.dart';
 import 'package:test/test.dart';
 
 const testDir = 'test/tmp/storage_impl_test';
@@ -38,31 +39,6 @@ void main() {
     });
   });
 
-  group('Register entity', () {
-    test('EntityFactory is null', () {
-      ArgumentError error;
-      try {
-        storage.register('test', null);
-      } on ArgumentError catch (e) {
-        error = e;
-      }
-      expect(error, isNotNull);
-      expect(error.message, contains('must not be null'));
-    });
-
-    test('Already regsitered', () {
-      ArgumentError error;
-      try {
-        storage.register('test_already_registered', (map) => User());
-        storage.register('test_already_registered', (map) => User());
-      } on ArgumentError catch (e) {
-        error = e;
-      }
-      expect(error, isNotNull);
-      expect(error.message, contains('already registered'));
-    });
-  });
-
   group('Open storage', () {
     tearDown(() async {
       await storage.close();
@@ -90,33 +66,51 @@ void main() {
       File('$testDir/').deleteSync(recursive: true);
     });
 
-    test('Repository not regsitered', () {
+    test('No TypeAdapter registered', () {
       ArgumentError error;
       try {
-        storage.get('test_not_registered');
+        storage.get<User>('test_not_registered');
       } on ArgumentError catch (e) {
         error = e;
       }
       expect(error, isNotNull);
-      expect(error.message, contains('No such repository'));
+      expect(error.message, contains('No TypeAdapter registered'));
+    });
+
+    test('Correct type', () {
+      storage.register(AnimalAdapter());
+      var repo = storage.get<Animal>('animals');
+      expect(repo, isA<Repository<Animal>>());
     });
 
     test('Wrong type', () {
       ArgumentError error;
       try {
-        storage.register<Animal>('users', (map) => Animal());
+        storage.register(UserAdapter());
+        storage.register(AnimalAdapter());
         storage.get<User>('users');
+        storage.get<Animal>('users');
       } on ArgumentError catch (e) {
         error = e;
       }
       expect(error, isNotNull);
-      expect(error.message, contains('registered as Repository<Animal>'));
+      expect(error.message, contains('"users" is of type Repository<User>'));
     });
 
-    test('Correct type', () {
-      storage.register<Animal>('animals', (map) => Animal());
-      var repo = storage.get<Animal>('animals');
-      expect(repo, isA<Repository<Animal>>());
+    test('Repository is cached', () {
+      storage.register(UserAdapter());
+      var firstGet = storage.get<User>('users');
+      var secondGet = storage.get<User>('users');
+      expect(firstGet, same(secondGet));
+    });
+
+    test('Repository cache cleared on close', () async {
+      storage.register(UserAdapter());
+      var firstGet = storage.get<User>('users');
+      await storage.close();
+      await storage.open('$testDir');
+      var secondGet = storage.get<User>('users');
+      expect(firstGet, isNot(same(secondGet)));
     });
   });
 }
@@ -136,5 +130,29 @@ class Animal with SodaEntity {
   @override
   Map<String, Object> toJson() {
     return {};
+  }
+}
+
+class UserAdapter extends TypeAdapter<User> {
+  @override
+  User deserialize(String data) {
+    return null;
+  }
+
+  @override
+  String serialize(User type) {
+    return null;
+  }
+}
+
+class AnimalAdapter extends TypeAdapter<Animal> {
+  @override
+  Animal deserialize(String data) {
+    return null;
+  }
+
+  @override
+  String serialize(Animal type) {
+    return null;
   }
 }

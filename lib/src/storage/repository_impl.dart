@@ -1,16 +1,14 @@
-import 'dart:convert';
-
 import 'package:soda_db/src/database/database.dart';
 import 'package:soda_db/src/storage/repository.dart';
 import 'package:soda_db/src/storage/soda_entity.dart';
-import 'package:soda_db/src/storage/storage.dart';
+import 'package:soda_db/src/storage/type_adapter.dart';
 
 class RepositoryImpl<T extends SodaEntity> implements Repository<T> {
   final String _groupId;
-  final EntityFactory<T> _factory;
+  final TypeAdapter<T> _adapter;
   final Database _db;
 
-  RepositoryImpl(this._groupId, this._factory, this._db);
+  RepositoryImpl(this._groupId, this._adapter, this._db);
 
   @override
   Future<T> get(int id) async {
@@ -18,7 +16,7 @@ class RepositoryImpl<T extends SodaEntity> implements Repository<T> {
     if (data == null) {
       return null;
     } else {
-      var entity = _factory(jsonDecode(data));
+      var entity = _adapter.deserialize(data);
       entity.id = id;
       return entity;
     }
@@ -29,7 +27,7 @@ class RepositoryImpl<T extends SodaEntity> implements Repository<T> {
     var entities = <T>[];
     var group = await _db.readGroup(_groupId);
     for (var data in group.entries) {
-      var entity = _factory(jsonDecode(data.value));
+      var entity = _adapter.deserialize(data.value);
       entity.id = data.key;
       entities.add(entity);
     }
@@ -38,7 +36,8 @@ class RepositoryImpl<T extends SodaEntity> implements Repository<T> {
 
   @override
   Future<void> put(T entity) async {
-    var id = await _db.writeEntity(_groupId, entity.id, jsonEncode(entity));
+    var id =
+        await _db.writeEntity(_groupId, entity.id, _adapter.serialize(entity));
     entity.id = id;
   }
 

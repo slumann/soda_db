@@ -2,6 +2,7 @@ import 'package:meta/meta.dart';
 import 'package:soda_db/src/storage/repository.dart';
 import 'package:soda_db/src/storage/soda_entity.dart';
 import 'package:soda_db/src/storage/storage_impl.dart';
+import 'package:soda_db/src/storage/type_adapter.dart';
 
 Storage _storage;
 
@@ -10,11 +11,6 @@ Storage get storage => _storage ??= StorageImpl();
 
 @visibleForTesting
 void set storage(Storage value) => _storage = value;
-
-/// Factory for [SodaEntity]s. A factory must be able to re-created a type
-/// from a Map<String, dynamic>. Each entity type must be registered using
-/// [storage.register].
-typedef EntityFactory<T extends SodaEntity> = T Function(Map<String, dynamic>);
 
 /// SodaDB access point. Provides facilities to open/close the storage,
 /// register entity types and obtain [Repository]s.
@@ -26,15 +22,9 @@ abstract class Storage {
   /// opened at a time.
   Future<void> open(String path);
 
-  /// Any [SodaEntity] that is to be stored must be registered first.
-  /// The [repository] name must be unique and must never be changed once a type
-  /// is registered. However, the same type might be registered more than one
-  /// time, if necessary.<br>
-  /// An [EntityFactory] must be provided in order to re-create entities of
-  /// a specific type.<br>
-  /// Entities might be registered before the storage is opened.
-  void register<T extends SodaEntity>(
-      String repository, EntityFactory<T> factory);
+  /// Registers the given [TypeAdapter], so that SodaDB is able to de-/serialize
+  /// [SodaEntity]s of the type supported by this adapter.
+  void register(TypeAdapter adapter);
 
   /// Retrieves the [Repository] for the given [repository] name from storage.
   Repository<T> get<T extends SodaEntity>(String repository);

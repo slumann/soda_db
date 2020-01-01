@@ -1,9 +1,11 @@
+import 'dart:convert';
+
 import 'package:soda_db/soda_db.dart';
+import 'package:soda_db/src/storage/type_adapter.dart';
 
 void main() async {
-  // Register type 'User' in repository named 'users'.
-  // Provide a builder method to re-create User instances from JSON maps.
-  storage.register<User>('users', (map) => User.fromMap(map));
+  // Register adapter for type 'User'.
+  storage.register(UserAdapter());
 
   // Open/create storage in path './example'.
   await storage.open('./example');
@@ -58,5 +60,17 @@ class User with SodaEntity {
       'firstName': firstName,
       'lastName': lastName,
     };
+  }
+}
+
+class UserAdapter extends TypeAdapter<User> {
+  @override
+  User deserialize(String data) {
+    return User.fromMap(jsonDecode(data));
+  }
+
+  @override
+  String serialize(User type) {
+    return jsonEncode(type);
   }
 }
