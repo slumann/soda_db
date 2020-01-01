@@ -47,12 +47,12 @@ void main() {
 
     test('Path ending without separator', () async {
       await storage.open('$testDir');
-      expect(File('$testDir/soda.db').existsSync(), isTrue);
+      expect(File('$testDir/${StorageImpl.dbFileName}').existsSync(), isTrue);
     });
 
     test('Path ending with separator', () async {
       await storage.open('$testDir/');
-      expect(File('$testDir/soda.db').existsSync(), isTrue);
+      expect(File('$testDir/${StorageImpl.dbFileName}').existsSync(), isTrue);
     });
   });
 

@@ -8,6 +8,7 @@ import 'package:soda_db/src/storage/storage.dart';
 import 'package:soda_db/src/storage/type_adapter.dart';
 
 class StorageImpl extends Storage {
+  static const dbFileName = 'soda_db';
   final _typeAdapters = <Type, TypeAdapter>{};
   final _repositories = <String, Repository>{};
   Database _db;
@@ -17,7 +18,7 @@ class StorageImpl extends Storage {
     if (!path.endsWith('/')) {
       path += '/';
     }
-    var file = File('${path}soda.db');
+    var file = File('$path$dbFileName');
     if (!await file.exists()) {
       await file.create(recursive: true);
     }

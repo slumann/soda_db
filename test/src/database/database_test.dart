@@ -14,12 +14,12 @@ void main() {
   Database db;
 
   MetaData readMetaFile() {
-    var data = File('${filePath}_meta').readAsStringSync();
+    var data = File('${filePath}.meta').readAsStringSync();
     return MetaData.fromMap(json.decode(data));
   }
 
   void writeMetaFile(MetaData metaData) {
-    var metaFile = File('${filePath}_meta');
+    var metaFile = File('${filePath}.meta');
     metaFile.writeAsStringSync(json.encode(metaData));
   }
 

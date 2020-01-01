@@ -27,7 +27,7 @@ class Database {
 
     _pageFile ??= await _file.open(mode: FileMode.append);
     await _pageFile.lock();
-    _metaFile ??= await File('${_file.path}_meta').open(mode: FileMode.append);
+    _metaFile ??= await File('${_file.path}.meta').open(mode: FileMode.append);
     await _metaFile.lock();
     if (await _metaFile.length() == 0) {
       _metaData = MetaData();
