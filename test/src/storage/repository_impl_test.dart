@@ -111,6 +111,6 @@ class TestEntityAdapter extends TypeAdapter<TestEntity> {
 
   @override
   String serialize(TestEntity entity) {
-    return jsonEncode(type);
+    return jsonEncode(entity);
   }
 }

@@ -35,7 +35,7 @@ class UserAdapter extends TypeAdapter<User> {
   // A convenient way would be to use JSON.
   @override
   String serialize(User entity) {
-    return jsonEncode(type);
+    return jsonEncode(entity);
   }
 
   // Deserialize your entity from the String
