@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:soda_db/src/database/database.dart';
 import 'package:soda_db/src/database/meta_data.dart';
 import 'package:test/test.dart';
+
+import '../test_utils.dart';
 
 const testDir = 'test/tmp/database_test';
 
@@ -21,17 +22,6 @@ void main() {
   void writeMetaFile(MetaData metaData) {
     var metaFile = File('${filePath}.meta');
     metaFile.writeAsStringSync(json.encode(metaData));
-  }
-
-  String createRandomString(int size) {
-    var buffer = StringBuffer();
-    var min = 97;
-    var max = 122;
-    var rnd = Random();
-    for (var i = 0; i < size; i++) {
-      buffer.writeCharCode(min + rnd.nextInt(max - min));
-    }
-    return buffer.toString();
   }
 
   setUp(() async {
