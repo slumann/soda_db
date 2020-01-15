@@ -1,7 +1,9 @@
 class DataType {
-  static const bool = '\x01';
-  static const string = '\x02';
-  static const list = '\x03';
-  static const set = '\x04';
-  static const map = '\x05';
+  static const int = '\x00';
+  static const double = '\x01';
+  static const bool = '\x02';
+  static const string = '\x03';
+  static const list = '\x04';
+  static const set = '\x05';
+  static const map = '\x06';
 }

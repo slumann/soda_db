@@ -64,6 +64,58 @@ void main() {
     });
   });
 
+  group('Write ints', () {
+    test('Write negative', () {
+      var expected = '${DataType.int}'
+          '\x00\x00\x00\x03'
+          '-15';
+      writer.write(-15);
+      expect(resultWithoutVersion(), equals(expected));
+    });
+
+    test('Write zero', () {
+      var expected = '${DataType.int}'
+          '\x00\x00\x00\x01'
+          '0';
+      writer.write(0);
+      expect(resultWithoutVersion(), equals(expected));
+    });
+
+    test('Write positive', () {
+      var expected = '${DataType.int}'
+          '\x00\x00\x00\x04'
+          '1234';
+      writer.write(1234);
+      expect(resultWithoutVersion(), equals(expected));
+    });
+  });
+
+  group('Write doubles', () {
+    test('Write negative', () {
+      var expected = '${DataType.double}'
+          '\x00\x00\x00\x04'
+          '-0.5';
+      writer.write(-0.50);
+      expect(resultWithoutVersion(), equals(expected));
+    });
+
+    test('Write zero', () {
+      var expected = '${DataType.double}'
+          '\x00\x00\x00\x03'
+          '0.0';
+      writer.write(0.000);
+      expect(resultWithoutVersion(), equals(expected));
+    });
+
+    test('Write positive', () {
+      var expected = '${DataType.double}'
+          '\x00\x00\x00\x04'
+          '12.3';
+      writer.write(12.300);
+      expect(resultWithoutVersion(), equals(expected));
+    });
+  });
+
   group('Write bools', () {
     test('Write true', () {
       var expected = '${DataType.bool}1';

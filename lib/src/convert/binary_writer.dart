@@ -16,7 +16,11 @@ class BinaryWriter {
   }
 
   void write(Object object) {
-    if (object is bool) {
+    if (object is int) {
+      _writeInt(object);
+    } else if (object is double) {
+      _writeDouble(object);
+    } else if (object is bool) {
       _writeBool(object);
     } else if (object is List) {
       _writeList(object);
@@ -27,6 +31,18 @@ class BinaryWriter {
     } else {
       _writeString(object.toString());
     }
+  }
+
+  void _writeInt(int i) {
+    _buffer.write(DataType.int);
+    _buffer.write(encodeLength(i.toString().length));
+    _buffer.write(i);
+  }
+
+  void _writeDouble(double d) {
+    _buffer.write(DataType.double);
+    _buffer.write(encodeLength(d.toString().length));
+    _buffer.write(d);
   }
 
   void _writeBool(bool b) {
