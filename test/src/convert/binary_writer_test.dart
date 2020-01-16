@@ -64,8 +64,8 @@ void main() {
     });
   });
 
-  group('Write ints', () {
-    test('Write negative', () {
+  group('Write int', () {
+    test('Negative', () {
       var expected = '${DataType.int}'
           '\x00\x00\x00\x03'
           '-15';
@@ -73,7 +73,7 @@ void main() {
       expect(resultWithoutVersion(), equals(expected));
     });
 
-    test('Write zero', () {
+    test('Zero', () {
       var expected = '${DataType.int}'
           '\x00\x00\x00\x01'
           '0';
@@ -81,7 +81,7 @@ void main() {
       expect(resultWithoutVersion(), equals(expected));
     });
 
-    test('Write positive', () {
+    test('Positive', () {
       var expected = '${DataType.int}'
           '\x00\x00\x00\x04'
           '1234';
@@ -90,8 +90,8 @@ void main() {
     });
   });
 
-  group('Write doubles', () {
-    test('Write negative', () {
+  group('Write double', () {
+    test('Negative', () {
       var expected = '${DataType.double}'
           '\x00\x00\x00\x04'
           '-0.5';
@@ -99,7 +99,7 @@ void main() {
       expect(resultWithoutVersion(), equals(expected));
     });
 
-    test('Write zero', () {
+    test('Zero', () {
       var expected = '${DataType.double}'
           '\x00\x00\x00\x03'
           '0.0';
@@ -107,7 +107,7 @@ void main() {
       expect(resultWithoutVersion(), equals(expected));
     });
 
-    test('Write positive', () {
+    test('Positive', () {
       var expected = '${DataType.double}'
           '\x00\x00\x00\x04'
           '12.3';
@@ -116,22 +116,22 @@ void main() {
     });
   });
 
-  group('Write bools', () {
-    test('Write true', () {
+  group('Write bool', () {
+    test('true', () {
       var expected = '${DataType.bool}1';
       writer.write(true);
       expect(resultWithoutVersion(), equals(expected));
     });
 
-    test('Write false', () {
+    test('false', () {
       var expected = '${DataType.bool}0';
       writer.write(false);
       expect(resultWithoutVersion(), equals(expected));
     });
   });
 
-  group('Write strings', () {
-    test('Empty string', () {
+  group('Write string', () {
+    test('Empty', () {
       var input = '';
       var expected = '${DataType.string}'
           '\x00\x00\x00\x00'
@@ -140,7 +140,7 @@ void main() {
       expect(resultWithoutVersion(), equals(expected));
     });
 
-    test('4 byte string', () {
+    test('4 bytes', () {
       var input = 'test';
       var expected = '${DataType.string}'
           '\x00\x00\x00\x04'
@@ -149,7 +149,7 @@ void main() {
       expect(resultWithoutVersion(), equals(expected));
     });
 
-    test('256 byte string', () {
+    test('256 bytes', () {
       var input = createRandomString(256);
       var expected = '${DataType.string}'
           '\x00\x00\x01\x00'
@@ -160,7 +160,7 @@ void main() {
   });
 
   group('Write list', () {
-    test('Empty list', () {
+    test('Empty', () {
       var list = <String>[];
       var expected = '${DataType.list}'
           '\x00\x00\x00\x00';
@@ -168,7 +168,7 @@ void main() {
       expect(resultWithoutVersion(), equals(expected));
     });
 
-    test('Non empty list', () {
+    test('Non empty', () {
       var list = ['one', 'two', 'three'];
       var expected = '${DataType.list}'
           '\x00\x00\x00\x03'
@@ -179,7 +179,7 @@ void main() {
       expect(resultWithoutVersion(), equals(expected));
     });
 
-    test('Nested lists', () {
+    test('Nested', () {
       var listOne = ['one'];
       var listTwo = [listOne];
       var expected = '${DataType.list}'
@@ -193,7 +193,7 @@ void main() {
   });
 
   group('Write map', () {
-    test('Empty map', () {
+    test('Empty', () {
       var map = <String, String>{};
       var expected = '${DataType.map}'
           '\x00\x00\x00\x00';
@@ -201,7 +201,7 @@ void main() {
       expect(resultWithoutVersion(), equals(expected));
     });
 
-    test('Non empty map', () {
+    test('Non empty', () {
       var map = {
         'k1': 'v1',
         'k2': 'v2',
@@ -216,7 +216,7 @@ void main() {
       expect(resultWithoutVersion(), equals(expected));
     });
 
-    test('Nested maps', () {
+    test('Nested', () {
       var mapOne = {'k1': 'v1'};
       var mapTwo = {'k2': mapOne};
       var expected = '${DataType.map}'
@@ -232,7 +232,7 @@ void main() {
   });
 
   group('Write set', () {
-    test('Empty set', () {
+    test('Empty', () {
       var set = <String>{};
       var expected = '${DataType.set}'
           '\x00\x00\x00\x00';
@@ -240,7 +240,7 @@ void main() {
       expect(resultWithoutVersion(), equals(expected));
     });
 
-    test('Non empty set', () {
+    test('Non empty', () {
       var set = {'one', 'two'};
       var expected = '${DataType.set}'
           '\x00\x00\x00\x02'
@@ -250,7 +250,7 @@ void main() {
       expect(resultWithoutVersion(), equals(expected));
     });
 
-    test('No duplicates in set', () {
+    test('No duplicates', () {
       var set = {'one', 'two', 'one'};
       var expected = '${DataType.set}'
           '\x00\x00\x00\x02'
