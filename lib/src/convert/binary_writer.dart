@@ -4,7 +4,7 @@ import 'package:meta/meta.dart';
 import 'package:soda_db/src/convert/data_type.dart';
 
 class BinaryWriter {
-  StringBuffer _buffer;
+  final StringBuffer _buffer;
 
   BinaryWriter({int dataVersion = 1}) : _buffer = StringBuffer() {
     _writeString(dataVersion.toString());
