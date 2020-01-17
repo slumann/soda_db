@@ -35,14 +35,14 @@ class BinaryWriter {
 
   void _writeInt(int i) {
     _buffer.write(DataType.int);
-    _buffer.write(encodeLength(i.toString().length));
-    _buffer.write(i);
+    var bytes = ByteData(8)..setInt64(0, i);
+    _buffer.write(String.fromCharCodes(bytes.buffer.asUint8List()));
   }
 
   void _writeDouble(double d) {
     _buffer.write(DataType.double);
-    _buffer.write(encodeLength(d.toString().length));
-    _buffer.write(d);
+    var bytes = ByteData(8)..setFloat64(0, d);
+    _buffer.write(String.fromCharCodes(bytes.buffer.asUint8List()));
   }
 
   void _writeBool(bool b) {

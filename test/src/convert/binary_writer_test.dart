@@ -67,25 +67,22 @@ void main() {
   group('Write int', () {
     test('Negative', () {
       var expected = '${DataType.int}'
-          '\x00\x00\x00\x03'
-          '-15';
-      writer.write(-15);
+          '\xff\xff\xff\xff\xff\xff\xff\xff';
+      writer.write(-1);
       expect(resultWithoutVersion(), equals(expected));
     });
 
     test('Zero', () {
       var expected = '${DataType.int}'
-          '\x00\x00\x00\x01'
-          '0';
+          '\x00\x00\x00\x00\x00\x00\x00\x00';
       writer.write(0);
       expect(resultWithoutVersion(), equals(expected));
     });
 
     test('Positive', () {
       var expected = '${DataType.int}'
-          '\x00\x00\x00\x04'
-          '1234';
-      writer.write(1234);
+          '\x00\x00\x00\x00\x00\x00\x00\xff';
+      writer.write(255);
       expect(resultWithoutVersion(), equals(expected));
     });
   });
@@ -93,25 +90,22 @@ void main() {
   group('Write double', () {
     test('Negative', () {
       var expected = '${DataType.double}'
-          '\x00\x00\x00\x04'
-          '-0.5';
+          '¿à\x00\x00\x00\x00\x00\x00';
       writer.write(-0.50);
       expect(resultWithoutVersion(), equals(expected));
     });
 
     test('Zero', () {
       var expected = '${DataType.double}'
-          '\x00\x00\x00\x03'
-          '0.0';
+          '\x00\x00\x00\x00\x00\x00\x00\x00';
       writer.write(0.000);
       expect(resultWithoutVersion(), equals(expected));
     });
 
     test('Positive', () {
       var expected = '${DataType.double}'
-          '\x00\x00\x00\x04'
-          '12.3';
-      writer.write(12.300);
+          '@\x00\x00\x00\x00\x00\x00\x00';
+      writer.write(2.0);
       expect(resultWithoutVersion(), equals(expected));
     });
   });
