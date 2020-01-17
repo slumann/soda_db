@@ -86,11 +86,8 @@ class BinaryWriter {
           '${0xffffffff.toString()}');
     }
 
-    var bytes = Uint8List(4);
-    bytes[0] = length >> 24;
-    bytes[1] = length >> 16;
-    bytes[2] = length >> 8;
-    bytes[3] = length;
-    return String.fromCharCodes(bytes);
+    var bytes = ByteData(4);
+    bytes.setUint32(0, length);
+    return String.fromCharCodes(bytes.buffer.asUint8List());
   }
 }
