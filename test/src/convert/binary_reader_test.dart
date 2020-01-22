@@ -21,19 +21,19 @@ void main() {
     test('Negative', () {
       writer.write(-12);
       reader = BinaryReader(writer.toString());
-      expect(reader.read(), equals(-12));
+      expect(reader.readNext(), equals(-12));
     });
 
     test('Zero', () {
       writer.write(0);
       reader = BinaryReader(writer.toString());
-      expect(reader.read(), equals(0));
+      expect(reader.readNext(), equals(0));
     });
 
     test('Positive', () {
       writer.write(23);
       reader = BinaryReader(writer.toString());
-      expect(reader.read(), equals(23));
+      expect(reader.readNext(), equals(23));
     });
   });
 
@@ -41,19 +41,19 @@ void main() {
     test('Negative', () {
       writer.write(-12.00);
       reader = BinaryReader(writer.toString());
-      expect(reader.read(), equals(-12.0));
+      expect(reader.readNext(), equals(-12.0));
     });
 
     test('Zero', () {
       writer.write(0.000);
       reader = BinaryReader(writer.toString());
-      expect(reader.read(), equals(0.0));
+      expect(reader.readNext(), equals(0.0));
     });
 
     test('Positive', () {
       writer.write(23.1);
       reader = BinaryReader(writer.toString());
-      expect(reader.read(), equals(23.1));
+      expect(reader.readNext(), equals(23.1));
     });
   });
 
@@ -61,13 +61,13 @@ void main() {
     test('true', () {
       writer.write(true);
       reader = BinaryReader(writer.toString());
-      expect(reader.read(), equals(true));
+      expect(reader.readNext(), equals(true));
     });
 
     test('false', () {
       writer.write(false);
       reader = BinaryReader(writer.toString());
-      expect(reader.read(), equals(false));
+      expect(reader.readNext(), equals(false));
     });
   });
 
@@ -75,14 +75,14 @@ void main() {
     test('Empty', () {
       writer.write('');
       reader = BinaryReader(writer.toString());
-      expect(reader.read(), isEmpty);
+      expect(reader.readNext(), isEmpty);
     });
 
     test('Non empty', () {
       var input = createRandomString(128);
       writer.write(input);
       reader = BinaryReader(writer.toString());
-      expect(reader.read(), equals(input));
+      expect(reader.readNext(), equals(input));
     });
   });
 
@@ -90,13 +90,13 @@ void main() {
     test('Empty', () {
       writer.write([]);
       reader = BinaryReader(writer.toString());
-      expect(reader.read(), equals([]));
+      expect(reader.readNext(), equals([]));
     });
 
     test('Non empty', () {
       writer.write(['one', 'two', 'three']);
       reader = BinaryReader(writer.toString());
-      expect(reader.read(), equals(['one', 'two', 'three']));
+      expect(reader.readNext(), equals(['one', 'two', 'three']));
     });
 
     test('Nested', () {
@@ -106,7 +106,7 @@ void main() {
       ]);
       reader = BinaryReader(writer.toString());
       expect(
-          reader.read(),
+          reader.readNext(),
           equals([
             ['1.1', '1.2'],
             ['2.1', '2.2']
@@ -118,7 +118,7 @@ void main() {
     test('Empty', () {
       writer.write({});
       reader = BinaryReader(writer.toString());
-      expect(reader.read(), equals({}));
+      expect(reader.readNext(), equals({}));
     });
 
     test('Non empty', () {
@@ -128,7 +128,7 @@ void main() {
       });
       reader = BinaryReader(writer.toString());
       expect(
-          reader.read(),
+          reader.readNext(),
           equals({
             'k1': 'v1',
             'k2': 'v2',
@@ -140,7 +140,7 @@ void main() {
       var mapTwo = {'k2': mapOne};
       writer.write(mapTwo);
       reader = BinaryReader(writer.toString());
-      expect(reader.read(), equals(mapTwo));
+      expect(reader.readNext(), equals(mapTwo));
     });
   });
 
@@ -148,13 +148,13 @@ void main() {
     test('Empty', () {
       writer.write(<String>{});
       reader = BinaryReader(writer.toString());
-      expect(reader.read(), equals(<String>{}));
+      expect(reader.readNext(), equals(<String>{}));
     });
 
     test('Non empty', () {
       writer.write({'one', 'two'});
       reader = BinaryReader(writer.toString());
-      expect(reader.read(), equals({'one', 'two'}));
+      expect(reader.readNext(), equals({'one', 'two'}));
     });
   });
 }
