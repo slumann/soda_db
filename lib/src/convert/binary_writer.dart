@@ -7,7 +7,7 @@ class BinaryWriter {
   final StringBuffer _buffer;
 
   BinaryWriter({int dataVersion = 1}) : _buffer = StringBuffer() {
-    _writeString(dataVersion.toString());
+    _writeInt(dataVersion);
   }
 
   @override

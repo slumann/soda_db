@@ -8,7 +8,7 @@ void main() {
   BinaryWriter writer;
 
   String resultWithoutVersion() {
-    return writer.toString().substring(6);
+    return writer.toString().substring(9);
   }
 
   setUp(() {
@@ -51,15 +51,15 @@ void main() {
 
   group('Write data version', () {
     test('Write default value', () {
-      var expected = '${DataType.string}'
-          '\x00\x00\x00\x011';
+      var expected = '${DataType.int}'
+          '\x00\x00\x00\x00\x00\x00\x00\x01';
       expect(writer.toString(), equals(expected));
     });
 
     test('Write custom value', () {
       writer = BinaryWriter(dataVersion: 2);
-      var expected = '${DataType.string}'
-          '\x00\x00\x00\x012';
+      var expected = '${DataType.int}'
+          '\x00\x00\x00\x00\x00\x00\x00\x02';
       expect(writer.toString(), equals(expected));
     });
   });
