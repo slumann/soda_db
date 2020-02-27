@@ -1,12 +1,14 @@
 import 'dart:typed_data';
 
-import 'package:meta/meta.dart';
 import 'package:soda_db/src/convert/data_type.dart';
 
 class BinaryWriter {
   final StringBuffer _buffer;
+  final ByteData _data;
 
-  BinaryWriter({int dataVersion = 1}) : _buffer = StringBuffer() {
+  BinaryWriter({int dataVersion = 1})
+      : _buffer = StringBuffer(),
+        _data = ByteData(8) {
     _writeInt(dataVersion);
   }
 
@@ -34,39 +36,50 @@ class BinaryWriter {
   }
 
   void _writeInt(int i) {
-    _buffer.write(DataType.int);
-    var bytes = ByteData(8)..setInt64(0, i);
-    _buffer.write(String.fromCharCodes(bytes.buffer.asUint8List()));
+    _writeTypeInfo(DataType.int, i);
   }
 
   void _writeDouble(double d) {
-    _buffer.write(DataType.double);
-    var bytes = ByteData(8)..setFloat64(0, d);
-    _buffer.write(String.fromCharCodes(bytes.buffer.asUint8List()));
+    _writeTypeInfo(DataType.double, d);
+  }
+
+  void _writeTypeInfo(int type, num n) {
+    if (n is double) {
+      _data.setFloat64(0, n);
+    } else {
+      _data.setInt64(0, n);
+    }
+    var varNum = _toVarNum(_data);
+    var typeInfo = type | varNum.length - 1;
+    _buffer.write(String.fromCharCode(typeInfo));
+    _buffer.write(String.fromCharCodes(varNum));
+  }
+
+  Uint8List _toVarNum(ByteData data) {
+    var bytes = data.buffer.asUint8List();
+    var idx = bytes.indexWhere((i) => i != 0);
+    idx = idx == -1 ? 7 : idx;
+    return bytes.sublist(idx);
   }
 
   void _writeBool(bool b) {
-    _buffer.write(DataType.bool);
-    _buffer.write(b ? 1 : 0);
+    _writeTypeInfo(DataType.bool, b ? 1 : 0);
   }
 
   void _writeList(List list) {
-    _buffer.write(DataType.list);
-    _buffer.write(encodeLength(list.length));
+    _writeTypeInfo(DataType.list, list.length);
     list.forEach((value) => write(value));
   }
 
   void _writeSet(Set set) {
-    _buffer.write(DataType.set);
-    _buffer.write(encodeLength(set.length));
+    _writeTypeInfo(DataType.set, set.length);
     for (var value in set) {
       write(value);
     }
   }
 
   void _writeMap(Map map) {
-    _buffer.write(DataType.map);
-    _buffer.write(encodeLength(map.length));
+    _writeTypeInfo(DataType.map, map.length);
     for (var entry in map.entries) {
       write(entry.key);
       write(entry.value);
@@ -74,20 +87,7 @@ class BinaryWriter {
   }
 
   void _writeString(String string) {
-    _buffer.write(DataType.string);
-    _buffer.write(encodeLength(string.length));
+    _writeTypeInfo(DataType.string, string.length);
     _buffer.write(string);
-  }
-
-  @visibleForTesting
-  String encodeLength(int length) {
-    if (length > 0xffffffff) {
-      throw ArgumentError('Max supported data length is '
-          '${0xffffffff.toString()}');
-    }
-
-    var bytes = ByteData(4);
-    bytes.setUint32(0, length);
-    return String.fromCharCodes(bytes.buffer.asUint8List());
   }
 }
