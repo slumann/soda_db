@@ -14,49 +14,51 @@ class BinaryReader {
   int get dataVersion => _dataVersion;
 
   dynamic readNext() {
-    var type = _readBytes(1);
+    var typeInfo = _readBytes(1).codeUnitAt(0);
+    var type = typeInfo & 0xf8;
+    var byteCount = (typeInfo & 0x07) + 1;
     switch (type) {
       case DataType.int:
-        return _readInt();
+        return _readInt(byteCount);
       case DataType.double:
-        return _readDouble();
+        return _readDouble(byteCount);
       case DataType.bool:
         return _readBool();
       case DataType.list:
-        return _readList();
+        return _readList(byteCount);
       case DataType.set:
-        return _readSet();
+        return _readSet(byteCount);
       case DataType.map:
-        return _readMap();
+        return _readMap(byteCount);
       case DataType.string:
       default:
-        return _readString();
+        return _readString(byteCount);
     }
   }
 
-  int _readInt() {
-    return _readNum().getInt64(0);
+  int _readInt(int byteCount) {
+    return _readNum(byteCount).getInt64(0);
   }
 
-  double _readDouble() {
-    return _readNum().getFloat64(0);
+  double _readDouble(int byteCount) {
+    return _readNum(byteCount).getFloat64(0);
   }
 
-  ByteData _readNum() {
-    var bytes = _readBytes(8);
+  ByteData _readNum(int byteCount) {
+    var bytes = _readBytes(byteCount);
     var data = ByteData(8);
-    for (var i = 0; i < 8; i++) {
-      data.setInt8(i, bytes.codeUnitAt(i));
+    for (var i = 8 - byteCount; i < 8; i++) {
+      data.setInt8(i, bytes.codeUnitAt(i - (8 - byteCount)));
     }
     return data;
   }
 
   bool _readBool() {
-    return _readBytes(1) == '1';
+    return _readBytes(1).codeUnitAt(0) == 1;
   }
 
-  List _readList() {
-    var length = _readLength();
+  List _readList(int byteCount) {
+    var length = _readInt(byteCount);
     var list = [];
     for (var i = 0; i < length; i++) {
       list.add(readNext());
@@ -64,8 +66,8 @@ class BinaryReader {
     return list;
   }
 
-  Set _readSet() {
-    var length = _readLength();
+  Set _readSet(int byteCount) {
+    var length = _readInt(byteCount);
     var set = <dynamic>{};
     for (var i = 0; i < length; i++) {
       set.add(readNext());
@@ -73,8 +75,8 @@ class BinaryReader {
     return set;
   }
 
-  Map _readMap() {
-    var length = _readLength();
+  Map _readMap(int byteCount) {
+    var length = _readInt(byteCount);
     var map = {};
     for (var i = 0; i < length; i++) {
       map[readNext()] = readNext();
@@ -82,18 +84,9 @@ class BinaryReader {
     return map;
   }
 
-  String _readString() {
-    return _readBytes(_readLength());
+  String _readString(int byteCount) {
+    return _readBytes(_readInt(byteCount));
   }
 
   String _readBytes(int length) => _data.substring(_pos, _pos += length);
-
-  int _readLength() {
-    var bytes = _readBytes(4);
-    var data = ByteData(4);
-    for (var i = 0; i < 4; i++) {
-      data.setUint8(i, bytes.codeUnitAt(i));
-    }
-    return data.getUint32(0);
-  }
 }
