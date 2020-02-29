@@ -18,6 +18,7 @@ void main() {
   setUp(() {
     writer = BinaryWriter();
   });
+
   group('Write data version', () {
     test('Write default value', () {
       var expected = intsAsChars([DataType.int | 0x00, 0x01]);
@@ -29,6 +30,11 @@ void main() {
       var expected = intsAsChars([DataType.int | 0x00, 0x02]);
       expect(writer.toString(), equals(expected));
     });
+  });
+
+  test('Write null value', () {
+    writer.write(null);
+    expect(resultWithoutVersion(), intsAsChars([DataType.nil]));
   });
 
   group('Write int', () {

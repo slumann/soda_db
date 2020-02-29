@@ -17,6 +17,12 @@ void main() {
     expect(reader.dataVersion, equals(1));
   });
 
+  test('Read null value', () {
+    writer.write(null);
+    reader = BinaryReader(writer.toString());
+    expect(reader.readNext(), isNull);
+  });
+
   group('Read int', () {
     test('Negative', () {
       writer.write(-12);

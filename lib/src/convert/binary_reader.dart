@@ -18,6 +18,8 @@ class BinaryReader {
     var type = typeInfo & 0xf8;
     var byteCount = (typeInfo & 0x07) + 1;
     switch (type) {
+      case DataType.nil:
+        return null;
       case DataType.int:
         return _readInt(byteCount);
       case DataType.double:

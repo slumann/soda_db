@@ -18,7 +18,9 @@ class BinaryWriter {
   }
 
   void write(Object object) {
-    if (object is int) {
+    if (object == null) {
+      _writeNull();
+    } else if (object is int) {
       _writeInt(object);
     } else if (object is double) {
       _writeDouble(object);
@@ -33,6 +35,10 @@ class BinaryWriter {
     } else {
       _writeString(object.toString());
     }
+  }
+
+  void _writeNull() {
+    _buffer.writeCharCode(DataType.nil);
   }
 
   void _writeInt(int i) {
@@ -51,8 +57,8 @@ class BinaryWriter {
     }
     var varNum = _toVarNum(_data);
     var typeInfo = type | varNum.length - 1;
-    _buffer.write(String.fromCharCode(typeInfo));
-    _buffer.write(String.fromCharCodes(varNum));
+    _buffer.writeCharCode(typeInfo);
+    varNum.forEach(_buffer.writeCharCode);
   }
 
   Uint8List _toVarNum(ByteData data) {
