@@ -1,3 +1,6 @@
+import 'package:soda_db/src/convert/binary_reader.dart';
+import 'package:soda_db/src/convert/binary_writer.dart';
+
 class MetaData {
   int _dbVersion = 1;
   Map<String, int> _ids;
@@ -44,6 +47,29 @@ class MetaData {
       'groups': groups,
     };
   }
+
+  @override
+  String toString() {
+    var writer = BinaryWriter()
+      ..write(_dbVersion)
+      ..write(_ids)
+      ..write(freePages)
+      ..write(groups);
+    return writer.toString();
+  }
+
+  MetaData.fromString(String data) {
+    var reader = BinaryReader(data);
+    _dbVersion = reader.readNext();
+    _ids = Map.from(reader.readNext());
+    freePages = List.from(reader.readNext());
+    groups = {};
+    var groupMap = reader.readNext();
+    for (var entry in groupMap.entries) {
+      groups[entry.key] = Map.from(entry.value)
+          .map((k, v) => MapEntry(k, MetaEntity.fromString(v)));
+    }
+  }
 }
 
 class MetaEntity {
@@ -62,5 +88,17 @@ class MetaEntity {
   MetaEntity.fromMap(Map<String, dynamic> map) {
     lastPageSize = map['lps'];
     pages = List<int>.from(map['pgs']) ?? [];
+  }
+
+  @override
+  String toString() {
+    var writer = BinaryWriter()..write(lastPageSize)..write(pages);
+    return writer.toString();
+  }
+
+  MetaEntity.fromString(String data) {
+    var reader = BinaryReader(data);
+    lastPageSize = reader.readNext();
+    pages = List.from(reader.readNext());
   }
 }

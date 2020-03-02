@@ -1,13 +1,30 @@
-import 'dart:convert';
-
+import 'package:soda_db/src/convert/binary_writer.dart';
 import 'package:soda_db/src/database/meta_data.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final jsonData =
-      '{"dbVersion":1,"ids":{"users":1},"freePages":[512,1024],"groups":'
-      '{"users":{"0":{"lps":128,"pgs":[1400,1800]},"1":{"lps":128,"pgs":[2000]}},'
-      '"animals":{"0":{"lps":256,"pgs":[2000]},"1":{"lps":256,"pgs":[2400,2600]}}}}';
+  var expected = BinaryWriter()
+    ..write(1)
+    ..write({'users': 1})
+    ..write([512, 1024])
+    ..write({
+      'users': {
+        '0': MetaEntity(128, [1400, 1800]),
+        '1': MetaEntity(128, [2000])
+      },
+      'animals': {
+        '0': MetaEntity(256, [2000]),
+        '1': MetaEntity(256, [2400, 2600])
+      }
+    });
+
+  test('Serialze MetaEntity', () {
+    var expectedEntity = BinaryWriter();
+    expectedEntity..write(512)..write([0, 1024]);
+
+    var entity = MetaEntity(512, [0, 1024]);
+    expect(entity.toString(), equals(expectedEntity.toString()));
+  });
 
   test('Serialize meta', () {
     var meta = MetaData();
@@ -23,11 +40,11 @@ void main() {
       '1': MetaEntity(256, [2400, 2600])
     };
 
-    expect(json.encode(meta), jsonData);
+    expect(meta.toString(), equals(expected.toString()));
   });
 
   test('Deserialize meta', () {
-    var meta = MetaData.fromMap(json.decode(jsonData));
+    var meta = MetaData.fromString(expected.toString());
     expect(meta.dbVersion, 1);
     expect(meta.createId('users'), 2);
     expect(meta.createId('animals'), 0);
