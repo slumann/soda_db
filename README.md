@@ -1,3 +1,5 @@
+![Dart CI](https://github.com/slumann/soda_db/workflows/Dart%20CI/badge.svg?branch=master)
+
 SodaDB is a lightweight and simple to use object-oriented storage for Dart and Flutter applications,
 with type-safe access on entities.
 
