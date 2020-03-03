@@ -66,8 +66,10 @@ class MetaData {
     groups = {};
     var groupMap = reader.readNext();
     for (var entry in groupMap.entries) {
-      groups[entry.key] = Map.from(entry.value)
-          .map((k, v) => MapEntry(k, MetaEntity.fromString(v)));
+      if (entry.value != null) {
+        groups[entry.key] = Map.from(entry.value)
+            .map((k, v) => MapEntry(k, MetaEntity.fromString(v)));
+      }
     }
   }
 }

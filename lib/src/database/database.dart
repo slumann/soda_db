@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:collection';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:soda_db/src/database/meta_data.dart';
@@ -39,7 +38,7 @@ class Database {
 
   Future<void> _writeMeta() async {
     await _metaFile.setPosition(0);
-    var data = jsonEncode(_metaData);
+    var data = _metaData.toString();
     await _metaFile.writeString(data);
     await _metaFile.truncate(data.length);
   }
@@ -47,7 +46,7 @@ class Database {
   Future<void> _readMeta() async {
     await _metaFile.setPosition(0);
     var data = await _metaFile.read(await _metaFile.length());
-    _metaData = MetaData.fromMap(jsonDecode(String.fromCharCodes(data)));
+    _metaData = MetaData.fromString(String.fromCharCodes(data));
   }
 
   Future<int> writeEntity(String groupId, int entityId, String data) {

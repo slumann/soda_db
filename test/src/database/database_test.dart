@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:soda_db/src/database/database.dart';
@@ -16,12 +15,12 @@ void main() {
 
   MetaData readMetaFile() {
     var data = File('${filePath}.meta').readAsStringSync();
-    return MetaData.fromMap(json.decode(data));
+    return MetaData.fromString(data);
   }
 
   void writeMetaFile(MetaData metaData) {
     var metaFile = File('${filePath}.meta');
-    metaFile.writeAsStringSync(json.encode(metaData));
+    metaFile.writeAsStringSync(metaData.toString());
   }
 
   setUp(() async {
