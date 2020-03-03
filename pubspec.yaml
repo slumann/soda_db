@@ -1,6 +1,6 @@
 name: soda_db
 version: 1.0.0
-description: Simple Object-oriented DArt DataBase
+description: Simple Object-oriented DArt DataBase. SodaDB is a lightweight and simple to use object-oriented storage for Dart and Flutter applications, with type-safe access on entities.
 homepage: https://github.com/slumann/soda_db
 repository: https://github.com/slumann/soda_db
 issue_tracker: https://github.com/slumann/soda_db/issues
