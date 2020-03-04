@@ -1,0 +1,14 @@
+name: codecov
+
+on: [push]
+
+jobs:
+      
+  coverage:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: codecov/codecov-action@v1.0.5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}	
