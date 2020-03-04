@@ -1,4 +1,4 @@
-![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/slumann/soda_db/build/master?logo=github) ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/slumann/soda_db?label=pub.dev&logo=dart&?link=https://pub.dev/packages/soda_db)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/slumann/soda_db/build/master?logo=github) [![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/slumann/soda_db?label=pub.dev&logo=dart)](link=https://pub.dev/packages/soda_db)
 
 SodaDB is a lightweight and simple to use object-oriented storage for Dart and Flutter applications,
 with type-safe access on entities.
