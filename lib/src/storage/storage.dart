@@ -10,7 +10,7 @@ Storage _storage;
 Storage get storage => _storage ??= StorageImpl();
 
 @visibleForTesting
-void set storage(Storage value) => _storage = value;
+set storage(Storage value) => _storage = value;
 
 /// SodaDB access point. Provides facilities to open/close the storage,
 /// register entity types and obtain [Repository]s.
