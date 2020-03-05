@@ -23,31 +23,6 @@ class MetaData {
     return _ids[group];
   }
 
-  MetaData.fromMap(Map<String, dynamic> map) {
-    _dbVersion = map['dbVersion'];
-    _ids = {};
-    var idsMap = map['ids'] ?? {};
-    idsMap.forEach((group, id) => _ids[group] = id);
-    freePages = List<int>.from(map['freePages']) ?? [];
-    groups = {};
-    var groupMaps = map['groups'] ?? {};
-    groupMaps.forEach((groupId, groupMap) {
-      groups.putIfAbsent(groupId, () => {});
-      groupMap?.forEach((entityId, entityMap) {
-        groups[groupId][entityId] = MetaEntity.fromMap(entityMap);
-      });
-    });
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'dbVersion': _dbVersion,
-      'ids': _ids,
-      'freePages': freePages,
-      'groups': groups,
-    };
-  }
-
   @override
   String toString() {
     var writer = BinaryWriter()
