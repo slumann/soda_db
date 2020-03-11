@@ -55,18 +55,6 @@ class MetaEntity {
 
   MetaEntity(this.lastPageSize, this.pages);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'lps': lastPageSize,
-      'pgs': pages,
-    };
-  }
-
-  MetaEntity.fromMap(Map<String, dynamic> map) {
-    lastPageSize = map['lps'];
-    pages = List<int>.from(map['pgs']) ?? [];
-  }
-
   @override
   String toString() {
     var writer = BinaryWriter()..write(lastPageSize)..write(pages);
