@@ -206,6 +206,18 @@ class Database {
     return false;
   }
 
+  List<String> getEntityIds(String groupId) {
+    if (_metaFile == null) {
+      throw StateError('Database not opened');
+    }
+
+    var result = <String>[];
+    if (_metaData.groups[groupId] != null) {
+      result.addAll(_metaData.groups[groupId].keys);
+    }
+    return result;
+  }
+
   Future<void> close() {
     return _addToQueue(() => _close());
   }

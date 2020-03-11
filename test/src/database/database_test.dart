@@ -159,6 +159,16 @@ void main() {
       }
       expect(error.message, 'Database not opened');
     });
+
+    test('on get entity IDs', () {
+      StateError error;
+      try {
+        db.getEntityIds('test');
+      } on StateError catch (e) {
+        error = e;
+      }
+      expect(error.message, 'Database not opened');
+    });
   });
 
   group('Functional tests', () {
@@ -290,6 +300,23 @@ void main() {
       expect(await db.readGroup('test'), {0: 'some test data'});
       expect(await db.deleteGroup('test'), true);
       expect(await db.readGroup('test'), {});
+    });
+
+    test('Read entity IDs for non existing group', () {
+      expect(db.getEntityIds('non_existing'), equals(<String>[]));
+    });
+
+    test('Read entity IDs for empty group', () async {
+      await db.writeEntity('test', null, 'some test data');
+      await db.deleteEntity('test', 0);
+      expect(db.getEntityIds('test'), equals(<String>[]));
+    });
+
+    test('Read entity IDs for group', () async {
+      await db.writeEntity('test', null, 'some test data');
+      await db.writeEntity('test', null, 'some test data');
+      await db.writeEntity('test', null, 'some test data');
+      expect(db.getEntityIds('test'), equals(['0', '1', '2']));
     });
   });
 
