@@ -2,7 +2,7 @@ import 'package:soda_db/src/convert/binary_reader.dart';
 import 'package:soda_db/src/convert/binary_writer.dart';
 import 'package:test/test.dart';
 
-import '../test_utils.dart';
+import '../utils/test_utils.dart';
 
 void main() {
   BinaryWriter writer;

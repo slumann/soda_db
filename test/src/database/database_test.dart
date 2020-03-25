@@ -4,7 +4,7 @@ import 'package:soda_db/src/database/database.dart';
 import 'package:soda_db/src/database/meta_data.dart';
 import 'package:test/test.dart';
 
-import '../test_utils.dart';
+import '../utils/test_utils.dart';
 
 const testDir = 'test/tmp/database_test';
 
