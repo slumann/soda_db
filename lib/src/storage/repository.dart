@@ -22,4 +22,7 @@ abstract class Repository<T extends SodaEntity> {
 
   /// Removes all entities from the repository.
   Future<void> clear();
+
+  /// Gets all entity IDs of this repository.
+  List<int> getEntityIds();
 }

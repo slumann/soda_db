@@ -54,4 +54,9 @@ class RepositoryImpl<T extends SodaEntity> implements Repository<T> {
   Future<void> clear() async {
     await _db.deleteGroup(_groupId);
   }
+
+  @override
+  List<int> getEntityIds() {
+    return _db.getEntityIds(_groupId);
+  }
 }
