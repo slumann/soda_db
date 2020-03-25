@@ -303,20 +303,20 @@ void main() {
     });
 
     test('Read entity IDs for non existing group', () {
-      expect(db.getEntityIds('non_existing'), equals(<String>[]));
+      expect(db.getEntityIds('non_existing'), equals(<int>[]));
     });
 
     test('Read entity IDs for empty group', () async {
       await db.writeEntity('test', null, 'some test data');
       await db.deleteEntity('test', 0);
-      expect(db.getEntityIds('test'), equals(<String>[]));
+      expect(db.getEntityIds('test'), equals(<int>[]));
     });
 
     test('Read entity IDs for group', () async {
       await db.writeEntity('test', null, 'some test data');
       await db.writeEntity('test', null, 'some test data');
       await db.writeEntity('test', null, 'some test data');
-      expect(db.getEntityIds('test'), equals(['0', '1', '2']));
+      expect(db.getEntityIds('test'), equals([0, 1, 2]));
     });
   });
 

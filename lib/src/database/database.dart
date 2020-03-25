@@ -206,7 +206,7 @@ class Database {
     return false;
   }
 
-  List<String> getEntityIds(String groupId) {
+  List<int> getEntityIds(String groupId) {
     if (_metaFile == null) {
       throw StateError('Database not opened');
     }
@@ -215,7 +215,7 @@ class Database {
     if (_metaData.groups[groupId] != null) {
       result.addAll(_metaData.groups[groupId].keys);
     }
-    return result;
+    return result.map((s) => int.parse(s)).toList();
   }
 
   Future<void> close() {
